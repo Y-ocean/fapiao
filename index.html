@@ -5,167 +5,126 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>发票凑单智能助手</title>
     <style>
-        :root { 
-            --primary: #07c160; 
-            --primary-dark: #06ad56;
-            --primary-light: #edfbf2;
-            --bg: #f7f9fa; 
-        }
-        * { box-sizing: border-box; }
-        
-        /* 全屏锁死布局：核心在于让body等于屏幕高度，不给滚动机会 */
-        html, body { 
-            height: 100%; margin: 0; padding: 0; 
-            background-color: var(--bg); overflow: hidden; 
-        }
+        :root { --primary: #07c160; --text: #111; --sub: #666; --bg: #f8fafc; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
         body {
             font-family: -apple-system, system-ui, sans-serif;
+            background-color: var(--bg); margin: 0; padding: 0;
             display: flex; flex-direction: column; align-items: center;
-            padding: 3vh 16px; /* 使用vh根据屏幕高度自动调整上下留白 */
         }
         
-        .container { 
-            max-width: 420px; width: 100%; height: 100%;
-            display: flex; flex-direction: column; justify-content: space-between;
-        }
+        .container { max-width: 450px; width: 100%; padding: 20px 16px; display: flex; flex-direction: column; min-height: 100vh; }
 
-        /* 1. 标题区：居中且强制单行自适应 */
-        .header { text-align: center; margin-bottom: 2vh; flex-shrink: 0; }
-        .header h1 { font-size: 24px; font-weight: 800; margin: 0; color: #111; letter-spacing: 0.5px; }
+        /* 头部：居中且清爽 */
+        .header { text-align: center; margin-bottom: 20px; }
+        .header h1 { font-size: clamp(20px, 6vw, 24px); font-weight: 800; margin: 0; color: var(--text); }
         .header p { 
-            /* 核心修正：响应式字号，且绝对不换行 */
-            font-size: clamp(10px, 2.8vw, 12px); 
-            color: #666; margin: 6px 0 0 0; 
+            font-size: clamp(10px, 2.8vw, 12px); color: var(--sub); margin: 8px 0 0 0; 
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
         }
 
-        /* 2. 中间主卡片：自适应剩余高度 */
-        .main-card { 
-            background: #fff; border-radius: 16px; padding: 16px; 
-            box-shadow: 0 4px 16px rgba(0,0,0,0.04);
-            display: flex; flex-direction: column; flex-grow: 1; /* 自动撑满中间 */
-            margin-bottom: 2vh; min-height: 0; /* 允许内部元素缩减 */
-        }
-
-        /* 输入框自动伸缩 */
+        /* 主输入卡片 */
+        .card { background: #fff; border-radius: 18px; padding: 18px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); margin-bottom: 15px; }
+        
         textarea {
-            width: 100%; flex-grow: 1; min-height: 80px; padding: 12px;
-            border: 1px solid #e5e7eb; border-radius: 10px;
-            font-size: 13px; background: #fafafa; resize: none; color: #333;
+            width: 100%; height: 140px; padding: 14px; border: 1px solid #efefef;
+            border-radius: 12px; font-size: 13px; background: #f9f9f9; resize: none;
+            line-height: 1.5; color: #333; transition: 0.3s;
         }
         textarea:focus { border-color: var(--primary); background: #fff; outline: none; }
-        
+
         .setting-row { 
             display: flex; justify-content: space-between; align-items: center; 
-            margin: 14px 0 2px 0; padding: 10px 12px; background: #f8f9fa; border-radius: 8px;
-            font-size: 13px; font-weight: bold; color: #444; flex-shrink: 0;
+            margin-top: 15px; padding: 12px; background: #fbfbfb; border-radius: 10px;
         }
         .input-num {
-            height: 32px; width: 85px; border: 1px solid #ddd; 
-            border-radius: 6px; text-align: center; color: var(--primary);
-            font-size: 14px; font-weight: bold;
+            height: 34px; width: 80px; border: 1px solid #ddd; border-radius: 6px;
+            text-align: center; color: var(--primary); font-weight: bold; font-size: 15px;
         }
 
         button {
-            width: 100%; background: var(--primary); color: #fff;
-            border: none; padding: 14px; font-size: 16px; font-weight: bold;
-            border-radius: 10px; cursor: pointer; flex-shrink: 0;
-            box-shadow: 0 4px 12px rgba(7,193,96,0.15);
+            width: 100%; background: var(--primary); color: #fff; border: none;
+            padding: 15px; font-size: 16px; font-weight: bold; border-radius: 12px;
+            margin-top: 15px; cursor: pointer; transition: 0.2s;
+            box-shadow: 0 4px 15px rgba(7,193,96,0.2);
         }
-        button:active { background: var(--primary-dark); }
+        button:active { transform: scale(0.98); }
 
-        /* 3. 广告位：完美锁死底部，配色大升级 */
+        /* 结果显示区：插入在中间 */
+        #resultArea { margin-top: 10px; display: none; }
+        .res-title { font-size: 14px; font-weight: 800; margin: 15px 0 10px 5px; color: #444; }
+        .res-card { 
+            background: #fff; border-radius: 14px; padding: 15px; margin-bottom: 12px; 
+            border-left: 5px solid var(--primary); box-shadow: 0 2px 12px rgba(0,0,0,0.02);
+        }
+        .res-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .res-total { font-size: 18px; font-weight: 800; color: var(--primary); }
+        .tag-wrap { display: flex; flex-wrap: wrap; gap: 5px; }
+        .tag { background: #f1f5f9; color: #475569; font-size: 11px; padding: 3px 8px; border-radius: 4px; border: 1px solid #e2e8f0; }
+
+        /* 广告位：视觉必经终点 */
         .ad-card { 
-            border: 1.5px solid var(--primary); 
-            background: linear-gradient(135deg, #ffffff 0%, var(--primary-light) 100%); 
-            padding: 14px; border-radius: 16px; flex-shrink: 0;
-            box-shadow: 0 4px 16px rgba(7,193,96,0.06);
-            margin-top: auto; /* 关键：死死推到最底部 */
+            margin-top: auto; /* 没计算时顶到最下 */
+            border: 1.5px solid #07c160; background: #fff; padding: 16px; border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(7,193,96,0.08);
         }
-        .ad-text { 
-            font-size: 13px; color: var(--primary-dark); font-weight: bold; 
-            text-align: center; line-height: 1.4; margin-bottom: 12px;
+        .ad-intro { font-size: 14px; color: var(--text); font-weight: bold; text-align: center; margin-bottom: 6px; }
+        .ad-slogan { 
+            font-size: clamp(8px, 2.8vw, 13px); color: var(--sub); text-align: center; 
+            white-space: nowrap; overflow: hidden; margin-bottom: 15px;
         }
-        .ad-flex { display: flex; justify-content: space-around; align-items: center; gap: 10px; }
-        .ad-qr-item { text-align: center; flex: 1; }
-        .ad-qr-item img { 
-            width: clamp(85px, 25vh, 105px); height: clamp(85px, 25vh, 105px); /* 广告图根据屏幕高度自适应缩放 */
-            border: 1px solid #e2e8f0; border-radius: 8px; background: #fff; padding: 4px;
-        }
-        .ad-qr-item span { display: block; font-size: 11px; font-weight: bold; margin-top: 6px; color: #475569; }
-        
-        .footer-warn { font-size: 10px; color: #dc2626; text-align: center; margin-top: 10px; font-weight: bold; }
-
-        /* 4. 浮层结果区：计算后才出现，不影响首屏 */
-        .result-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.4); display: none; justify-content: center; align-items: flex-end;
-            z-index: 999;
-        }
-        .result-window {
-            background: #fff; width: 100%; max-width: 450px; max-height: 75vh;
-            border-radius: 20px 20px 0 0; padding: 20px; overflow-y: auto;
-            animation: slideUp 0.3s ease-out;
-        }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        
-        .res-close { float: right; font-size: 20px; color: #999; cursor: pointer; font-weight: bold; }
-        .res-item { border-left: 4px solid var(--primary); background: #f8f9fa; padding: 10px; margin-bottom: 10px; border-radius: 6px; }
-        .res-sum { color: var(--primary); font-weight: bold; font-size: 16px; }
-        .tag { font-size: 11px; background: #eec; padding: 2px 6px; margin: 2px; border-radius: 4px; display: inline-block; background: #e2e8f0; color: #334155; }
+        .ad-flex { display: flex; justify-content: space-around; gap: 10px; }
+        .ad-qr { text-align: center; flex: 1; }
+        .ad-qr img { width: 100px; height: 100px; border-radius: 8px; border: 1px solid #eee; padding: 3px; }
+        .ad-qr span { display: block; font-size: 11px; font-weight: bold; margin-top: 6px; color: #334155; }
+        .footer-tips { font-size: 10px; color: #ee0a24; text-align: center; margin-top: 12px; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <!-- 头部区 -->
     <div class="header">
         <h1>发票凑单智能助手</h1>
         <p>💡拒绝烧脑 · 一键秒出最佳发票组合，数据不上传，自动计算最优的发票组合。</p>
     </div>
 
-    <!-- 中间自适应卡片 -->
-    <div class="main-card">
-        <textarea id="invoiceInput" placeholder="在此粘贴大量发票金额明细..."></textarea>
+    <div class="card">
+        <textarea id="invoiceInput" placeholder="在此粘贴发票金额明细(支持空格/逗号/回车)..."></textarea>
         <div class="setting-row">
-            <span>🎯 起始目标金额</span>
+            <span style="color:#555">🎯 目标金额起算</span>
             <div>
                 <input type="number" id="targetInput" class="input-num" value="100.00" step="0.01">
-                <span> 元起</span>
+                <span style="font-size:13px; color:#999"> 元</span>
             </div>
         </div>
-        <button onclick="solveInvoiceLogic()">立即开启科学凑单</button>
+        <button onclick="solveInvoiceLogic()">开启科学计算方案</button>
     </div>
 
-    <!-- 底部完美锁死广告位（风格大洗牌，清新高级绿） -->
-    <div class="card ad-card">
-        <div class="ad-text">我们每天搜罗【淘/京/拼】领隐藏券、1分钱好物、外卖大红包，一年多省几千块！</div>
+    <div id="resultArea">
+        <div class="res-title">📊 匹配方案已生成</div>
+        <div id="resultContent"></div>
+    </div>
+
+    <div class="ad-card">
+        <div class="ad-intro">🎁 算完啦！这里还有个全网省钱终极秘密 👇</div>
+        <div class="ad-slogan">我们每天搜罗【淘/京/拼】领隐藏券、1分钱好物、外卖大红包，一年多省几千块！</div>
         <div class="ad-flex">
-            <div class="ad-qr-item">
+            <div class="ad-qr">
                 <img src="mp.jpg" alt="公众号">
                 <span style="color:#ff9800;">关注公众号</span>
             </div>
-            <div class="ad-qr-item">
+            <div class="ad-qr">
                 <img src="wx.jpg" alt="微信">
                 <span style="color:#00b0ff;">加小助手进群</span>
             </div>
         </div>
-        <div class="footer-warn">⚠️ 漏洞单稍纵即逝，早进群1分钟，多抢一个免单！</div>
-    </div>
-</div>
-
-<!-- 结果弹窗层：不污染首屏布局 -->
-<div id="resultOverlay" class="result-overlay" onclick="closeResult()">
-    <div class="result-window" onclick="event.stopPropagation()">
-        <span class="res-close" onclick="closeResult()">×</span>
-        <h3 style="margin-top: 0; font-size: 16px; border-left: 4px solid var(--primary); padding-left: 8px;">📊 智能分配建议</h3>
-        <div id="resultContent"></div>
+        <div class="footer-tips">⚠️ 漏洞单稍纵即逝，早进群1分钟，多抢一个免单！</div>
     </div>
 </div>
 
 <script>
-// --- 核心算法部分：完全闭嘴不动，100%保留 ---
+// --- 核心算法逻辑：严格保留 Python 原始榨干逻辑 ---
 function findSubsetSumPerfect(nums, target) {
     let dp = { 0: -1 };
     for (let i = 0; i < nums.length; i++) {
@@ -197,7 +156,8 @@ function solveInvoiceLogic() {
     const rawInput = document.getElementById('invoiceInput').value;
     const startTargetValue = parseFloat(document.getElementById('targetInput').value);
     let pool = rawInput.replace(/，/g, ',').split(/[\s,]+/).map(x => Math.round(parseFloat(x) * 100)).filter(x => !isNaN(x) && x > 0).sort((a, b) => b - a);
-    if (pool.length === 0) { alert("请输入金额数据"); return; }
+    
+    if (pool.length === 0) { alert("请输入有效金额"); return; }
 
     let finalResults = [];
     let startLimit = Math.round(startTargetValue * 100);
@@ -218,33 +178,38 @@ function solveInvoiceLogic() {
         if (finalResults.length > 500) break;
     }
 
-    // --- 弹窗渲染逻辑 ---
-    const overlay = document.getElementById('resultOverlay');
+    // --- 渲染逻辑 ---
+    const resultArea = document.getElementById('resultArea');
     const resultContent = document.getElementById('resultContent');
     
     let html = "";
     finalResults.forEach((res, i) => {
-        html += `<div class="res-item">
-            <div style="display:flex;justify-content:space-between;align-items:center;">
-                <span style="font-size:12px;color:#666;font-weight:bold;">方案 ${i+1}</span>
-                <span class="res-sum">¥${res.total}</span>
+        html += `
+        <div class="res-card">
+            <div class="res-top">
+                <span style="font-size:12px;color:#999;font-weight:bold;">方案 ${i+1}</span>
+                <span class="res-total">¥${res.total}</span>
             </div>
-            <div style="margin-top:6px">${res.items.map(p => `<span class="tag">${p}</span>`).join('')}</div>
+            <div class="tag-wrap">
+                ${res.items.map(p => `<span class="tag">${p}</span>`).join('')}
+            </div>
         </div>`;
     });
     
     let remainSum = (pool.reduce((a,b)=>a+b, 0)/100).toFixed(2);
-    html += `<div style="padding:12px;background:#fff1f0;border-radius:8px;font-size:12px;color:#cf1322;margin-top:12px;border:1px solid #ffa39e;">
-        <b>📉 剩余资产总额：¥${remainSum}</b><br>
-        <div style="margin-top:6px;opacity:0.8;display:flex;flex-wrap:wrap;gap:4px;">${pool.map(x=>`<span class="tag" style="background:#fee2e2;color:#991b1b">${(x/100).toFixed(2)}</span>`).join('') || '无'}</div>
+    html += `
+    <div style="padding:15px;background:#fff1f0;border-radius:14px;border:1px solid #ffccc7;margin-bottom:20px;">
+        <div style="font-size:13px;color:#cf1322;font-weight:bold;">📉 剩余未匹配资产总计：¥${remainSum}</div>
+        <div class="tag-wrap" style="margin-top:10px;opacity:0.7;">
+            ${pool.map(x=>`<span class="tag" style="background:#fff">${(x/100).toFixed(2)}</span>`).join('') || '无'}
+        </div>
     </div>`;
 
     resultContent.innerHTML = html;
-    overlay.style.display = "flex"; // 弹出半屏结果层
-}
-
-function closeResult() {
-    document.getElementById('resultOverlay').style.display = "none";
+    resultArea.style.display = "block";
+    
+    // 自动滑动一点点，引导用户向下看结果（经过广告）
+    window.scrollBy({ top: 100, behavior: 'smooth' });
 }
 </script>
 </body>
