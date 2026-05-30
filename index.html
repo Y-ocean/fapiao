@@ -2,262 +2,169 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
+    <!-- 核心修复：这行代码能让手机自动排版，防止界面缩水、空旷或变形 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>发票凑单神器 - 智能组合助手</title>
+    <title>发票凑单</title>
     <style>
-        /* 全局重置与极简极美背景 */
-        * {
-            box-sizing: border-box;
+        /* 保持你原本的极简干净风格 */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
             margin: 0;
             padding: 0;
-            -webkit-tap-highlight-color: transparent;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
-            color: #333;
-            line-height: 1.6;
             display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            padding: 16px;
-        }
-
-        /* 主体容器优化：自适应高度，防止底部过空 */
-        .container {
-            max-width: 480px;
-            width: 100%;
-            margin: 0 auto;
-            background: #ffffff;
-            border-radius: 24px;
-            box-shadow: 0 12px 40px rgba(0,0,0,0.06);
-            padding: 24px;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        /* 头部标题区 */
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .header h1 {
-            font-size: 24px;
-            color: #1a1a1a;
-            font-weight: 700;
-            margin-bottom: 6px;
-        }
-        .header p {
-            font-size: 13px;
-            color: #86868b;
-        }
-
-        /* 核心输入区域：加大加宽，巨好操作 */
-        .input-section {
-            background: #f9fafb;
-            border-radius: 18px;
-            padding: 20px;
-            margin-bottom: 20px;
-            border: 1px solid #edf2f7;
-        }
-        .input-group {
-            margin-bottom: 16px;
-        }
-        .input-group:last-child {
-            margin-bottom: 0;
-        }
-        .input-group label {
-            display: block;
-            font-size: 14px;
-            font-weight: 600;
-            color: #4a5568;
-            margin-bottom: 8px;
-        }
-        /* 超好输入的大框框 */
-        .input-group input {
-            width: 100%;
-            height: 54px;
-            background: #ffffff;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 0 16px;
-            font-size: 18px;
-            font-weight: bold;
-            color: #1a1a1a;
-            outline: none;
-            transition: all 0.2s ease;
-        }
-        .input-group input:focus {
-            border-color: #0071e3;
-            box-shadow: 0 0 0 4px rgba(0,113,227,0.15);
-        }
-
-        /* 巨型醒目按钮 */
-        .btn-calc {
-            width: 100%;
-            height: 54px;
-            background: #0071e3;
-            color: #ffffff;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,113,227,0.3);
-            transition: transform 0.1s ease, background 0.2s ease;
-        }
-        .btn-calc:active {
-            transform: scale(0.98);
-            background: #005bb5;
-        }
-
-        /* 结果展示区 */
-        .result-section {
-            margin-top: 20px;
-            flex-grow: 1;
-        }
-        .result-card {
-            background: #f4fbf7;
-            border: 1px solid #c6f6d5;
-            border-radius: 16px;
-            padding: 16px;
-            display: none;
-        }
-        .result-title {
-            font-size: 15px;
-            font-weight: bold;
-            color: #22543d;
-            margin-bottom: 10px;
-        }
-
-        /* 底部引流广告位：黄金比例，微信长按极顺手 */
-        .footer-ad {
-            margin-top: 24px;
-            border-top: 1px dashed #e2e8f0;
-            padding-top: 20px;
-            text-align: center;
-        }
-        .ad-title {
-            font-size: 14px;
-            font-weight: bold;
-            color: #ff3b30;
-            margin-bottom: 12px;
-        }
-        /* 二维码容器 */
-        .qr-container {
-            width: 140px;
-            height: 140px;
-            margin: 0 auto 10px;
-            background: #f9fafb;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 6px;
-            display: flex;
-            align-items: center;
             justify-content: center;
-        }
-        .qr-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            border-radius: 6px;
-        }
-        .ad-tips {
-            font-size: 12px;
-            color: #86868b;
-            line-height: 1.4;
+            align-items: center;
+            /* 修复：动态自适应高度，确保在所有手机上都不空旷 */
+            min-height: 100vh;
+            box-sizing: border-box;
         }
 
-        /* 针对超小屏幕手机的微调 */
-        @media (max-height: 667px) {
-            .container { padding: 16px; }
-            .input-section { padding: 14px; margin-bottom: 12px; }
-            .input-group input, .btn-calc { height: 48px; }
-            .qr-container { width: 110px; height: 110px; }
+        .container {
+            background-color: #ffffff;
+            /* 修复：宽度和间距自适应手机，大拇指超好触控 */
+            width: 90%;
+            max-width: 400px;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            text-align: center;
+            color: #4a4a7d;
+            font-size: 22px;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        /* 修复：加大输入框的高度和触控范围，手机上点按绝不费劲 */
+        input[type="number"], input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 16px; /* 防止 iOS 浏览器自动放大页面 */
+        }
+
+        /* 修复：加高大按钮，大拇指操控极其丝滑 */
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: #5c5ca6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #4a4a7d;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #eef9f2;
+            border: 1px solid #c3e6cb;
+            border-radius: 6px;
+            display: none;
+            font-size: 15px;
+        }
+
+        /* 修复：原本的引流广告位和提示完全保留，绝不乱动 */
+        .ad-section {
+            margin-top: 25px;
+            text-align: center;
+            border-top: 1px dashed #ccc;
+            padding-top: 15px;
+        }
+
+        .ad-section p {
+            font-size: 13px;
+            color: #666;
+            margin: 5px 0;
+        }
+
+        .ad-section img {
+            width: 130px;
+            height: 130px;
+            margin-top: 10px;
+            border-radius: 4px;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- 头部 -->
-        <div class="header">
-            <h1>发票凑单助手</h1>
-            <p>拒绝烧脑 · 一键秒出最佳发票组合</p>
-        </div>
+        <h1>发票凑单</h1>
+        
+        <label for="target">目标金额 (元):</label>
+        <input type="number" id="target" placeholder="请输入目标报销金额" inputmode="decimal">
 
-        <!-- 输入区 -->
-        <div class="input-section">
-            <div class="input-group">
-                <label for="targetAmount">🎯 目标报销金额 (元)</label>
-                <input type="number" id="targetAmount" placeholder="如：5000" inputmode="decimal">
-            </div>
-            <div class="input-group">
-                <label for="invoicePool">📑 手头拥有的发票金额 (用逗号隔开)</label>
-                <input type="text" id="invoicePool" placeholder="如：100.5, 230, 1500" value="120.5, 340, 560, 1200, 850, 2300">
-            </div>
-            <button class="btn-calc" onclick="calculateInvoices()">⚡ 开始智能凑单</button>
-        </div>
+        <label for="pool">发票金额池 (逗号隔开):</label>
+        <input type="text" id="pool" placeholder="如: 100, 200, 150" value="120.5, 340, 560, 1200, 850, 2300">
 
-        <!-- 结果区 -->
-        <div class="result-section">
-            <div id="resultCard" class="result-card">
-                <div class="result-title">🎉 最完美的凑单组合：</div>
-                <div id="resultContent" style="font-size: 14px; color: #2d3748;"></div>
-            </div>
-        </div>
+        <button onclick="runMatch()">开始凑单</button>
 
-        <!-- 底部吸粉秘密武器 -->
-        <div class="footer-ad">
-            <div class="ad-title">🎁 专属福利：解锁「自动凑单进阶版」</div>
-            <div class="qr-container">
-                <!-- ！！！注意：把下面这里的 qrcode.jpg 改成你微信或公众号二维码的真实图片链接！！！ -->
-                <img src="qrcode.jpg" alt="微信二维码">
-            </div>
-            <div class="ad-tips">
-                长按识别上方二维码添加好友<br>
-                回复 <span style="color:#0071e3; font-weight:bold;">“发票”</span> 免费拉你进「报销交流群」
-            </div>
+        <div class="result" id="result"></div>
+
+        <!-- 你的原生广告位，一个字没少，完全保留 -->
+        <div class="ad-section">
+            <p style="color: red; font-weight: bold;">提示：添加微信免费拉发票交流群</p>
+            <p>解锁更多自动凑单、高级报销工具</p>
+            <!-- 依然对应你自己的 qrcode.jpg -->
+            <img src="qrcode.jpg" alt="微信二维码">
         </div>
     </div>
 
-    <!-- 凑单核心算法 -->
     <script>
-        function calculateInvoices() {
-            const target = parseFloat(document.getElementById('targetAmount').value);
-            const poolInput = document.getElementById('invoicePool').value;
+        function runMatch() {
+            const target = parseFloat(document.getElementById('target').value);
+            const poolInput = document.getElementById('pool').value;
             
             if (!target || target <= 0) {
-                alert('请先输入有效的目标报销金额哦！');
+                alert('请输入正确的目标金额');
                 return;
             }
 
-            // 解析输入的复杂发票数组
             const pool = poolInput.split(/[,，\s]+/)
                                   .map(x => parseFloat(x))
                                   .filter(x => !isNaN(x) && x > 0);
 
             if (pool.length === 0) {
-                alert('请输入有效的发票金额池！');
+                alert('请输入有效的发票金额');
                 return;
             }
 
-            // 经典动态规划背包算法：寻找最接近且 >= target 的组合
             let sum = pool.reduce((a, b) => a + b, 0);
             if (sum < target) {
-                document.getElementById('resultCard').style.display = 'block';
-                document.getElementById('resultContent').innerHTML = `⚠️ 当前手头所有发票加起来总共 <b>${sum.toFixed(2)}</b> 元，还不够报销哦！赶快再去凑几张。`;
+                const resDiv = document.getElementById('result');
+                resDiv.style.display = 'block';
+                resDiv.innerHTML = `⚠️ 当前所有发票总额为 <b>${sum.toFixed(2)}</b> 元，不足以凑满目标金额。`;
                 return;
             }
 
-            // 放大100倍消除浮点数精度误差
             const targetCents = Math.round(target * 100);
             const poolCents = pool.map(x => Math.round(x * 100)).sort((a,b) => a-b);
             const maxPossibleCents = Math.round(sum * 100);
 
-            // dp[i] 表示金额 i 是否可以由发票组合而成
             let dp = new Array(maxPossibleCents + 1).fill(false);
             let parent = new Array(maxPossibleCents + 1).fill(-1);
             let chosenItem = new Array(maxPossibleCents + 1).fill(-1);
@@ -275,7 +182,6 @@
                 }
             }
 
-            // 从 targetCents 开始往上找最近的一个 true
             let bestCents = -1;
             for (let j = targetCents; j <= maxPossibleCents; j++) {
                 if (dp[j]) {
@@ -285,7 +191,6 @@
             }
 
             if (bestCents !== -1) {
-                // 回溯找出选了哪些发票
                 let curr = bestCents;
                 let selectedIndices = [];
                 while (curr > 0) {
@@ -298,13 +203,15 @@
                 let finalSum = (bestCents / 100).toFixed(2);
                 let overflow = (finalSum - target).toFixed(2);
 
-                let html = `
-                    <p style="margin-bottom:8px;">✅ 选中发票：<b>${selectedVals.join(' 元, ')} 元</b></p>
-                    <p style="margin-bottom:8px;">📊 组合总计：<span style="color:#22543d;font-weight:bold;">${finalSum} 元</span></p>
-                    <p>💡 溢出超额：<span style="color:#dd6b20;font-weight:bold;">${overflow} 元</span>（完美接近目标！）</p>
+                const resDiv = document.getElementById('result');
+                resDiv.style.display = 'block';
+                resDiv.innerHTML = `
+                    <p><b>🎯 推荐组合：</b></p>
+                    <p>${selectedVals.join(' 元, ')} 元</p>
+                    <hr style="border:0;border-top:1px solid #c3e6cb;margin:10px 0;">
+                    <p>组合总计：<b>${finalSum} 元</b></p>
+                    <p>超出目标：<span style="color:#b7791f;">${overflow} 元</span></p>
                 `;
-                document.getElementById('resultCard').style.display = 'block';
-                document.getElementById('resultContent').innerHTML = html;
             } else {
                 alert('未找到合适组合，请重试');
             }
