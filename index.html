@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>发票凑单智能助手</title>
     <style>
+        /* ========== 完整保留A代码的视觉风格、字体、字样、间距 ========== */
         :root { --primary: #07c160; --orange: #ff4e00; --bg: #f8fafc; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
@@ -50,7 +51,7 @@
         }
         button:active { opacity: 0.8; transform: scale(0.98); }
 
-        /* 广告拦截位：视觉中心点 */
+        /* 广告拦截位：视觉中心点 (完全保留A样式) */
         .ad-box { 
             border: 1.5px solid var(--orange); background: #fffcf9; padding: 15px; border-radius: 16px;
             box-shadow: 0 4px 12px rgba(255, 78, 0, 0.08); margin-bottom: 12px;
@@ -70,7 +71,7 @@
         
         .footer-warn { font-size: 10px; color: #ee0a24; text-align: center; margin-top: 10px; font-weight: bold; }
 
-        /* 结果显示区：必须在广告位下方 */
+        /* 结果显示区：必须在广告位下方 (样式保持A风格但内部显示逻辑适配B计算结果) */
         #resultCard { display: none; padding-bottom: 30px; }
         .result-title { font-size: 15px; font-weight: bold; margin: 10px 0 10px 5px; color: #111; }
         .result-item { 
@@ -78,6 +79,10 @@
             border-left: 5px solid var(--primary); box-shadow: 0 2px 10px rgba(0,0,0,0.02);
         }
         .badge { display: inline-block; background: #e8f5e9; color: var(--primary); font-size: 11px; padding: 2px 6px; border-radius: 4px; font-weight: bold; margin-bottom: 8px; }
+        
+        /* 额外保证 结果中金额文本更清晰 */
+        .result-item p { margin: 6px 0; line-height: 1.5; font-size: 14px; }
+        .result-item strong { font-weight: 700; color: #1f2937; }
     </style>
 </head>
 <body>
@@ -123,91 +128,110 @@
 </div>
 
 <script>
-// --- 核心算法：100% 还原你提供的 DP 回溯逻辑 ---
-function calculateOptimalInvoices() {
-    const rawInput = document.getElementById('invoiceInput').value;
-    const targetInput = document.getElementById('targetInput').value;
-    
-    const target = Math.round(parseFloat(targetInput) * 100);
-    if (isNaN(target) || target <= 0) {
-        alert("请输入有效的目标金额！");
-        return;
-    }
+    // ========== 核心计算逻辑完全按照B代码的方式 ==========
+    // 精细动态规划 + 大额优先回溯，与B代码算法保持完全一致
+    // 但渲染结果时仍然沿用A的整体卡片样式和字体风格（仅逻辑/结果组合描述遵循B风格，但已适配视觉）
+    function calculateOptimalInvoices() {
+        const rawInput = document.getElementById('invoiceInput').value;
+        const targetInput = document.getElementById('targetInput').value;
+        
+        // 目标金额转换（单位：分）
+        const target = Math.round(parseFloat(targetInput) * 100);
+        if (isNaN(target) || target <= 0) {
+            alert("请输入有效的目标金额！");
+            return;
+        }
 
-    const invoices = rawInput.replace(/，/g, ',')
+        // 解析发票，转为分单位，过滤无效项（完全采纳B代码的解析策略）
+        let invoices = rawInput.replace(/，/g, ',')
                             .split(/[\s,]+/)
                             .map(x => Math.round(parseFloat(x) * 100))
                             .filter(x => !isNaN(x) && x > 0);
 
-    if (invoices.length === 0) {
-        alert("请至少输入一个有效的发票金额！");
-        return;
-    }
+        if (invoices.length === 0) {
+            alert("请至少输入一个有效的发票金额！");
+            return;
+        }
 
-    // 算法逻辑执行
-    invoices.sort((a, b) => b - a);
-    const sum = invoices.reduce((a, b) => a + b, 0);
-    const resultContent = document.getElementById('resultContent');
-    const resultCard = document.getElementById('resultCard');
+        // 关键：按照大额优先排序（符合B算法前置排序，确保DP结果稳定且优先考虑大额）
+        invoices.sort((a, b) => b - a);
+        const sum = invoices.reduce((a, b) => a + b, 0);
+        const resultCard = document.getElementById('resultCard');
+        const resultContent = document.getElementById('resultContent');
 
-    if (sum < target) {
-        resultContent.innerHTML = `
-            <div class="result-item" style="border-left-color: #f56c6c;">
-                <span class="badge" style="background:#fef0f0; color:#f56c6c;">算力极限</span>
-                <p style="margin: 3px 0 0 0; font-size: 13px;">发票总额 <strong>${(sum/100).toFixed(2)}</strong> 元，不够凑齐目标金额。</p>
-            </div>`;
-        resultCard.style.display = 'block';
-        resultCard.scrollIntoView({ behavior: 'smooth' });
-        return;
-    }
+        // 情况1: 总额不足目标
+        if (sum < target) {
+            resultContent.innerHTML = `
+                <div class="result-item" style="border-left-color: #f56c6c;">
+                    <span class="badge" style="background:#fef0f0; color:#f56c6c;">算力极限</span>
+                    <p style="margin: 3px 0 0 0; font-size: 13px;">发票总额 <strong>${(sum/100).toFixed(2)}</strong> 元，不够凑齐目标金额。</p>
+                </div>`;
+            resultCard.style.display = 'block';
+            // 平滑滚动到结果区域（与B交互体验一致）
+            setTimeout(() => {
+                resultCard.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+            return;
+        }
 
-    const maxLimit = target + Math.max(...invoices);
-    let dp = new Array(maxLimit + 1).fill(false);
-    let parent = new Array(maxLimit + 1).fill(null);
-    dp[0] = true;
-    let minAchievable = maxLimit;
+        // 动态规划背包: 完全按照B代码逻辑(DP+parent回溯)
+        const maxLimit = target + Math.max(...invoices);
+        let dp = new Array(maxLimit + 1).fill(false);
+        let parent = new Array(maxLimit + 1).fill(null);
+        dp[0] = true;
+        let minAchievable = maxLimit;
 
-    for (let i = 0; i < invoices.length; i++) {
-        const coin = invoices[i];
-        for (let j = maxLimit; j >= coin; j--) {
-            if (dp[j - coin] && !dp[j]) {
-                dp[j] = true;
-                parent[j] = { prev: j - coin, coinValue: coin, index: i };
-                if (j >= target && j < minAchievable) {
-                    minAchievable = j;
+        for (let i = 0; i < invoices.length; i++) {
+            const coin = invoices[i];
+            for (let j = maxLimit; j >= coin; j--) {
+                if (dp[j - coin] && !dp[j]) {
+                    dp[j] = true;
+                    parent[j] = { prev: j - coin, coinValue: coin, index: i };
+                    if (j >= target && j < minAchievable) {
+                        minAchievable = j;
+                    }
                 }
             }
         }
+
+        // 回溯找到选中的金额列表
+        let curr = minAchievable;
+        const selectedCoins = [];
+        while (curr > 0 && parent[curr] !== null) {
+            selectedCoins.push(parent[curr].coinValue);
+            curr = parent[curr].prev;
+        }
+
+        const totalSelectedSum = (minAchievable / 100).toFixed(2);
+        const waste = ((minAchievable - target) / 100).toFixed(2);
+        
+        // 构建带加号的金额列表样式 (完全遵循B的结果文本形式，但使用A的组件样式展示)
+        // 注意B代码在结果展示时文案类似 “组合：xx + xx 元”，而A代码原有风格有明细标粗等，我们沿用B的表述但融入A的视觉模版
+        const formattedList = selectedCoins.map(x => `<b style="color:#07c160;">${(x/100).toFixed(2)}</b>`).join(' + ');
+        
+        // 最终渲染内容 —— 融合B代码的细节信息：强调“大额优先+最接近目标”，保持推荐语的清晰风格
+        // 同时保证不丢失任何算法信息 (溢出金额，组合明细)
+        let htmlResult = `
+            <div class="result-item">
+                <span class="badge">🔥 最优推荐方案</span>
+                <p style="margin: 4px 0 0; font-size: 13px; line-height: 1.5;"><strong>组合明细：</strong> ${formattedList} 元</p>
+                <p style="margin: 8px 0 4px 0; font-size: 14px;"><strong>方案总额：</strong><span style="color:#07c160; font-size:20px; font-weight:900;">${totalSelectedSum}</span> 元</p>
+                <p style="margin: 2px 0; color: #888; font-size:12px;">（仅溢出 ${waste} 元，大额发票已优先消耗，已为您选择最接近目标的组合）</p>
+            </div>
+        `;
+        
+        resultContent.innerHTML = htmlResult;
+        resultCard.style.display = 'block';
+        
+        // 自动滚动至结果区域，让用户看到精准结果（原生B行为）
+        setTimeout(() => {
+            resultCard.scrollIntoView({ behavior: 'smooth' });
+        }, 120);
     }
-
-    let curr = minAchievable;
-    const selectedCoins = [];
-    while (curr > 0 && parent[curr] !== null) {
-        selectedCoins.push(parent[curr].coinValue);
-        curr = parent[curr].prev;
-    }
-
-    const totalSelectedSum = (minAchievable / 100).toFixed(2);
-    const waste = ((minAchievable - target) / 100).toFixed(2);
-    const formattedList = selectedCoins.map(x => `<b style="color:#333;">${(x/100).toFixed(2)}</b>`).join(' + ');
-
-    // 结果渲染
-    resultContent.innerHTML = `
-        <div class="result-item">
-            <span class="badge">🔥 最优方案推荐</span>
-            <p style="margin: 4px 0; font-size: 13px; line-height: 1.6;"><strong>明细：</strong>${formattedList} 元</p>
-            <p style="margin: 8px 0 4px 0; font-size: 14px;"><strong>方案总额：</strong><span style="color:#07c160; font-size:20px; font-weight:900;">${totalSelectedSum}</span> 元</p>
-            <p style="margin: 2px 0; color: #888; font-size:12px;">（仅溢出 ${waste} 元，已为您选择最接近目标的组合）</p>
-        </div>
-    `;
-
-    resultCard.style.display = 'block';
     
-    // 自动平滑滚动到结果区域（滚动时会经过广告位）
-    setTimeout(() => {
-        resultCard.scrollIntoView({ behavior: 'smooth' });
-    }, 150);
-}
+    // 附加说明: 本代码从视觉上完全保留A代码的所有样式（字体、按钮、圆角、广告区等），
+    // 算法核心及结果生成逻辑完全按照B代码（DP+parent回溯+大额优先组合+溢出提示）实现。
+    // 同时兼容移动端，保证最佳凑单方案计算结果科学可靠。
 </script>
 </body>
 </html>
