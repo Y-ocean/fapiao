@@ -14,11 +14,11 @@
             display: flex; flex-direction: column; align-items: center;
         }
         
-        .container { max-width: 450px; width: 100%; padding: 20px 16px; display: flex; flex-direction: column; min-height: 100vh; }
+        .container { max-width: 450px; width: 100%; padding: 20px 16px; display: flex; flex-direction: column; }
 
-        /* 头部：居中且清爽 */
+        /* 头部：居中 */
         .header { text-align: center; margin-bottom: 20px; }
-        .header h1 { font-size: clamp(20px, 6vw, 24px); font-weight: 800; margin: 0; color: var(--text); }
+        .header h1 { font-size: 22px; font-weight: 800; margin: 0; color: var(--text); }
         .header p { 
             font-size: clamp(10px, 2.8vw, 12px); color: var(--sub); margin: 8px 0 0 0; 
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
@@ -28,57 +28,60 @@
         .card { background: #fff; border-radius: 18px; padding: 18px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); margin-bottom: 15px; }
         
         textarea {
-            width: 100%; height: 140px; padding: 14px; border: 1px solid #efefef;
+            width: 100%; height: 130px; padding: 14px; border: 1px solid #efefef;
             border-radius: 12px; font-size: 13px; background: #f9f9f9; resize: none;
-            line-height: 1.5; color: #333; transition: 0.3s;
+            line-height: 1.5; color: #333;
         }
         textarea:focus { border-color: var(--primary); background: #fff; outline: none; }
 
         .setting-row { 
             display: flex; justify-content: space-between; align-items: center; 
-            margin-top: 15px; padding: 12px; background: #fbfbfb; border-radius: 10px;
+            margin-top: 15px; padding: 10px 12px; background: #fbfbfb; border-radius: 10px;
         }
         .input-num {
-            height: 34px; width: 80px; border: 1px solid #ddd; border-radius: 6px;
-            text-align: center; color: var(--primary); font-weight: bold; font-size: 15px;
+            height: 32px; width: 80px; border: 1px solid #ddd; border-radius: 6px;
+            text-align: center; color: var(--primary); font-weight: bold;
         }
 
         button {
             width: 100%; background: var(--primary); color: #fff; border: none;
             padding: 15px; font-size: 16px; font-weight: bold; border-radius: 12px;
-            margin-top: 15px; cursor: pointer; transition: 0.2s;
+            margin: 15px 0; cursor: pointer;
             box-shadow: 0 4px 15px rgba(7,193,96,0.2);
         }
-        button:active { transform: scale(0.98); }
 
-        /* 结果显示区：插入在中间 */
-        #resultArea { margin-top: 10px; display: none; }
-        .res-title { font-size: 14px; font-weight: 800; margin: 15px 0 10px 5px; color: #444; }
-        .res-card { 
-            background: #fff; border-radius: 14px; padding: 15px; margin-bottom: 12px; 
-            border-left: 5px solid var(--primary); box-shadow: 0 2px 12px rgba(0,0,0,0.02);
-        }
-        .res-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .res-total { font-size: 18px; font-weight: 800; color: var(--primary); }
-        .tag-wrap { display: flex; flex-wrap: wrap; gap: 5px; }
-        .tag { background: #f1f5f9; color: #475569; font-size: 11px; padding: 3px 8px; border-radius: 4px; border: 1px solid #e2e8f0; }
-
-        /* 广告位：视觉必经终点 */
+        /* 广告位：现在的“拦截站” */
         .ad-card { 
-            margin-top: auto; /* 没计算时顶到最下 */
             border: 1.5px solid #07c160; background: #fff; padding: 16px; border-radius: 20px;
-            box-shadow: 0 4px 20px rgba(7,193,96,0.08);
+            box-shadow: 0 4px 20px rgba(7,193,96,0.08); margin-bottom: 20px;
         }
         .ad-intro { font-size: 14px; color: var(--text); font-weight: bold; text-align: center; margin-bottom: 6px; }
         .ad-slogan { 
-            font-size: clamp(8px, 2.8vw, 13px); color: var(--sub); text-align: center; 
+            font-size: clamp(8px, 2.9vw, 13px); color: var(--sub); text-align: center; 
             white-space: nowrap; overflow: hidden; margin-bottom: 15px;
         }
         .ad-flex { display: flex; justify-content: space-around; gap: 10px; }
         .ad-qr { text-align: center; flex: 1; }
-        .ad-qr img { width: 100px; height: 100px; border-radius: 8px; border: 1px solid #eee; padding: 3px; }
+        .ad-qr img { width: 110px; height: 110px; border-radius: 8px; border: 1px solid #eee; padding: 3px; }
         .ad-qr span { display: block; font-size: 11px; font-weight: bold; margin-top: 6px; color: #334155; }
         .footer-tips { font-size: 10px; color: #ee0a24; text-align: center; margin-top: 12px; font-weight: bold; }
+
+        /* 结果显示区：放在广告位的下方 */
+        #resultArea { display: none; padding-bottom: 40px; }
+        .res-title { font-size: 15px; font-weight: 800; margin: 10px 0 15px 5px; color: #333; display: flex; align-items: center; }
+        .res-title::before { content: ""; display: inline-block; width: 4px; height: 15px; background: var(--primary); margin-right: 8px; border-radius: 2px; }
+        .res-card { 
+            background: #fff; border-radius: 14px; padding: 15px; margin-bottom: 12px; 
+            box-shadow: 0 2px 12px rgba(0,0,0,0.02); border: 1px solid #eee;
+        }
+        .res-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .res-total { font-size: 18px; font-weight: 800; color: var(--primary); }
+        .tag-wrap { display: flex; flex-wrap: wrap; gap: 5px; }
+        .tag { background: #f1f5f9; color: #475569; font-size: 11px; padding: 3px 8px; border-radius: 4px; }
+
+        /* 强制引导滑动的动画效果 */
+        @keyframes hint { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
+        .scroll-hint { text-align: center; color: var(--primary); font-size: 12px; font-weight: bold; margin-top: 5px; display: none; animation: hint 1.5s infinite; }
     </style>
 </head>
 <body>
@@ -92,18 +95,14 @@
     <div class="card">
         <textarea id="invoiceInput" placeholder="在此粘贴发票金额明细(支持空格/逗号/回车)..."></textarea>
         <div class="setting-row">
-            <span style="color:#555">🎯 目标金额起算</span>
+            <span style="color:#555; font-size: 13px;">🎯 起始目标金额</span>
             <div>
                 <input type="number" id="targetInput" class="input-num" value="100.00" step="0.01">
                 <span style="font-size:13px; color:#999"> 元</span>
             </div>
         </div>
         <button onclick="solveInvoiceLogic()">开启科学计算方案</button>
-    </div>
-
-    <div id="resultArea">
-        <div class="res-title">📊 匹配方案已生成</div>
-        <div id="resultContent"></div>
+        <div id="scrollHint" class="scroll-hint">✨ 计算完成！向下滑动查看结果 👇</div>
     </div>
 
     <div class="ad-card">
@@ -121,10 +120,15 @@
         </div>
         <div class="footer-tips">⚠️ 漏洞单稍纵即逝，早进群1分钟，多抢一个免单！</div>
     </div>
+
+    <div id="resultArea">
+        <div class="res-title">智能匹配方案结果</div>
+        <div id="resultContent"></div>
+    </div>
 </div>
 
 <script>
-// --- 核心算法逻辑：严格保留 Python 原始榨干逻辑 ---
+// --- 核心算法严格保留 ---
 function findSubsetSumPerfect(nums, target) {
     let dp = { 0: -1 };
     for (let i = 0; i < nums.length; i++) {
@@ -132,20 +136,12 @@ function findSubsetSumPerfect(nums, target) {
         let newEntries = {};
         for (let s in dp) {
             let newSum = parseInt(s) + val;
-            if (newSum <= target && !(newSum in dp)) {
-                newEntries[newSum] = i;
-            }
+            if (newSum <= target && !(newSum in dp)) { newEntries[newSum] = i; }
         }
         Object.assign(dp, newEntries);
         if (target in dp) {
-            let res = [];
-            let curr = target;
-            while (curr > 0) {
-                let index = dp[curr];
-                let valFound = nums[index];
-                res.push(valFound);
-                curr -= valFound;
-            }
+            let res = []; let curr = target;
+            while (curr > 0) { let index = dp[curr]; let valFound = nums[index]; res.push(valFound); curr -= valFound; }
             return res;
         }
     }
@@ -157,14 +153,13 @@ function solveInvoiceLogic() {
     const startTargetValue = parseFloat(document.getElementById('targetInput').value);
     let pool = rawInput.replace(/，/g, ',').split(/[\s,]+/).map(x => Math.round(parseFloat(x) * 100)).filter(x => !isNaN(x) && x > 0).sort((a, b) => b - a);
     
-    if (pool.length === 0) { alert("请输入有效金额"); return; }
+    if (pool.length === 0) { alert("请输入金额"); return; }
 
     let finalResults = [];
-    let startLimit = Math.round(startTargetValue * 100);
-    let currentTarget = startLimit;
+    let currentTarget = Math.round(startTargetValue * 100);
 
     while (true) {
-        if (pool.reduce((a, b) => a + b, 0) < startLimit) break;
+        if (pool.reduce((a, b) => a + b, 0) < Math.round(startTargetValue * 100)) break;
         while (true) {
             let combo = findSubsetSumPerfect(pool, currentTarget);
             if (combo) {
@@ -178,38 +173,30 @@ function solveInvoiceLogic() {
         if (finalResults.length > 500) break;
     }
 
-    // --- 渲染逻辑 ---
     const resultArea = document.getElementById('resultArea');
     const resultContent = document.getElementById('resultContent');
+    const scrollHint = document.getElementById('scrollHint');
     
     let html = "";
     finalResults.forEach((res, i) => {
-        html += `
-        <div class="res-card">
-            <div class="res-top">
-                <span style="font-size:12px;color:#999;font-weight:bold;">方案 ${i+1}</span>
-                <span class="res-total">¥${res.total}</span>
-            </div>
-            <div class="tag-wrap">
-                ${res.items.map(p => `<span class="tag">${p}</span>`).join('')}
-            </div>
+        html += `<div class="res-card">
+            <div class="res-top"><span style="font-size:12px;color:#999;">方案 ${i+1}</span><span class="res-total">¥${res.total}</span></div>
+            <div class="tag-wrap">${res.items.map(p => `<span class="tag">${p}</span>`).join('')}</div>
         </div>`;
     });
     
     let remainSum = (pool.reduce((a,b)=>a+b, 0)/100).toFixed(2);
-    html += `
-    <div style="padding:15px;background:#fff1f0;border-radius:14px;border:1px solid #ffccc7;margin-bottom:20px;">
-        <div style="font-size:13px;color:#cf1322;font-weight:bold;">📉 剩余未匹配资产总计：¥${remainSum}</div>
-        <div class="tag-wrap" style="margin-top:10px;opacity:0.7;">
-            ${pool.map(x=>`<span class="tag" style="background:#fff">${(x/100).toFixed(2)}</span>`).join('') || '无'}
-        </div>
+    html += `<div style="padding:15px;background:#fff1f0;border-radius:14px;border:1px solid #ffccc7;margin-top:10px;">
+        <div style="font-size:13px;color:#cf1322;font-weight:bold;">📉 剩余未匹配资产：¥${remainSum}</div>
+        <div class="tag-wrap" style="margin-top:10px;opacity:0.7;">${pool.map(x=>`<span class="tag" style="background:#fff">${(x/100).toFixed(2)}</span>`).join('') || '无'}</div>
     </div>`;
 
     resultContent.innerHTML = html;
     resultArea.style.display = "block";
+    scrollHint.style.display = "block"; // 显示滑动提示
     
-    // 自动滑动一点点，引导用户向下看结果（经过广告）
-    window.scrollBy({ top: 100, behavior: 'smooth' });
+    // 并不自动滚动到底部，而是原地不动，引导用户自己滑下去看，这样必看广告
+    alert("方案计算成功！请向下滑动查看详细结果。");
 }
 </script>
 </body>
