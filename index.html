@@ -5,398 +5,622 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>发票凑单智能助手</title>
     <style>
-        /* ========== 完整保留A代码的视觉风格 ========== */
-        :root { --primary: #07c160; --orange: #ff4e00; --bg: #f8fafc; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
+        /* ========== 完整保留视觉风格 ========== */
+        :root {
+            --primary: #07c160;
+            --orange: #ff4e00;
+            --bg: #f8fafc;
+            --guide-extract: #4a90e2;
+            --guide-pupu: #ff6b35;
+            --guide-xx: #ffb347;
+        }
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
         body {
             font-family: -apple-system, system-ui, sans-serif;
-            background-color: var(--bg); margin: 0; padding: 0;
-            display: flex; flex-direction: column; align-items: center;
-        }
-        
-        .container { max-width: 450px; width: 100%; padding: 15px; display: flex; flex-direction: column; }
-
-        .header { text-align: center; margin-bottom: 15px; }
-        .header h1 { font-size: 22px; font-weight: 800; margin: 0; color: #111; }
-        .header p { 
-            font-size: clamp(10px, 2.9vw, 12px); color: #666; margin: 6px 0 0 0; 
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
+            background-color: var(--bg);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        .card { background: #fff; border-radius: 16px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); margin-bottom: 12px; }
-        label { display: block; font-size: 13px; font-weight: bold; margin-bottom: 8px; color: #444; }
-        
+        .container {
+            max-width: 450px;
+            width: 100%;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .header h1 {
+            font-size: 22px;
+            font-weight: 800;
+            margin: 0;
+            color: #111;
+        }
+        .header .subtitle {
+            font-size: clamp(10px, 2.9vw, 12px);
+            color: #666;
+            margin: 6px 0 0 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* ========== 开票教程按钮区域 ========== */
+        .guide-buttons-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+            padding: 0 2px;
+            flex-wrap: wrap; /* 允许小屏幕换行 */
+        }
+        .guide-btn {
+            flex: 1;
+            min-width: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 12px 8px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            letter-spacing: 0.5px;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            position: relative;
+            overflow: hidden;
+        }
+        .guide-btn:active {
+            transform: scale(0.95);
+            opacity: 0.85;
+        }
+        /* 提取发票金额按钮 - 蓝色系 */
+        .guide-btn-extract {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            color: #0d47a1;
+            border: 1.5px solid #90caf9;
+            box-shadow: 0 2px 8px rgba(13, 71, 161, 0.10);
+        }
+        .guide-btn-extract .guide-icon {
+            font-size: 20px;
+        }
+        .guide-btn-extract .guide-badge {
+            display: inline-block;
+            background: #0d47a1;
+            color: #fff;
+            font-size: 9px;
+            padding: 2px 7px;
+            border-radius: 20px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        /* 朴朴超市按钮 - 清新绿色系 */
+        .guide-btn-pupu {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            color: #2e7d32;
+            border: 1.5px solid #a5d6a7;
+            box-shadow: 0 2px 8px rgba(46, 125, 50, 0.10);
+        }
+        .guide-btn-pupu .guide-icon {
+            font-size: 20px;
+        }
+        .guide-btn-pupu .guide-badge {
+            display: inline-block;
+            background: #2e7d32;
+            color: #fff;
+            font-size: 9px;
+            padding: 2px 7px;
+            border-radius: 20px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        /* 小象超市按钮 - 暖橙色系 */
+        .guide-btn-xx {
+            background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+            color: #e65100;
+            border: 1.5px solid #ffcc80;
+            box-shadow: 0 2px 8px rgba(230, 81, 0, 0.10);
+        }
+        .guide-btn-xx .guide-icon {
+            font-size: 20px;
+        }
+        .guide-btn-xx .guide-badge {
+            display: inline-block;
+            background: #e65100;
+            color: #fff;
+            font-size: 9px;
+            padding: 2px 7px;
+            border-radius: 20px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        /* ========== 模态框 (弹窗) ========== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.65);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.2s ease;
+            -webkit-overflow-scrolling: touch;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideUp {
+            from { transform: translateY(40px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .modal-dialog {
+            background: #fff;
+            border-radius: 18px;
+            width: 92%;
+            max-width: 420px;
+            max-height: 85vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+            animation: slideUp 0.3s ease;
+            padding: 20px 16px 16px 16px;
+        }
+        .modal-close {
+            position: sticky;
+            top: 0;
+            float: right;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #f5f5f5;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            transition: all 0.2s;
+            z-index: 10;
+            flex-shrink: 0;
+            margin-left: auto;
+            margin-bottom: -20px;
+        }
+        .modal-close:active {
+            background: #e0e0e0;
+            transform: scale(0.9);
+        }
+        .modal-title {
+            font-size: 16px;
+            font-weight: 800;
+            color: #111;
+            text-align: center;
+            margin: 0 0 14px 0;
+            padding-right: 30px;
+        }
+        .modal-image-wrapper {
+            text-align: center;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #fafafa;
+            padding: 4px;
+        }
+        .modal-image-wrapper img {
+            width: 100%;
+            height: auto;
+            max-height: 60vh;
+            object-fit: contain;
+            border-radius: 8px;
+            display: block;
+            margin: 0 auto;
+        }
+        .modal-image-fallback {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+            font-size: 13px;
+        }
+        .modal-tip {
+            text-align: center;
+            font-size: 11px;
+            color: #aaa;
+            margin-top: 10px;
+        }
+
+        /* ========== 原有卡片样式 ========== */
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            margin-bottom: 12px;
+        }
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #444;
+        }
         textarea {
-            width: 100%; height: 100px; padding: 12px; border: 1px solid #eee;
-            border-radius: 10px; font-size: 13px; background: #fafafa; resize: none;
-            line-height: 1.5; color: #333;
+            width: 100%;
+            height: 100px;
+            padding: 12px;
+            border: 1px solid #eee;
+            border-radius: 10px;
+            font-size: 13px;
+            background: #fafafa;
+            resize: none;
+            line-height: 1.5;
+            color: #333;
         }
-        
-        .setting-row { 
-            display: flex; justify-content: space-between; align-items: center; 
-            margin-top: 12px; padding: 10px; background: #fbfbfb; border-radius: 8px;
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            padding: 10px;
+            background: #fbfbfb;
+            border-radius: 8px;
         }
         .input-num {
-            height: 34px; width: 90px; border: 1px solid #ddd; border-radius: 6px;
-            text-align: center; color: var(--primary); font-weight: bold; font-size: 15px;
+            height: 34px;
+            width: 90px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            text-align: center;
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 15px;
         }
-
         button {
-            width: 100%; background: var(--primary); color: #fff; border: none;
-            padding: 14px; font-size: 16px; font-weight: bold; border-radius: 10px;
-            margin-top: 12px; cursor: pointer; transition: 0.2s;
+            width: 100%;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 10px;
+            margin-top: 12px;
+            cursor: pointer;
+            transition: 0.2s;
         }
-        button:active { opacity: 0.8; transform: scale(0.98); }
+        button:active {
+            opacity: 0.8;
+            transform: scale(0.98);
+        }
 
-        .ad-box { 
-            border: 1.5px solid var(--orange); background: #fffcf9; padding: 15px; border-radius: 16px;
-            box-shadow: 0 4px 12px rgba(255, 78, 0, 0.08); margin-bottom: 12px;
+        .ad-box {
+            border: 1.5px solid var(--orange);
+            background: #fffcf9;
+            padding: 15px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(255, 78, 0, 0.08);
+            margin-bottom: 12px;
         }
         .ad-intro { font-size: 14px; color: var(--orange); font-weight: bold; text-align: center; margin-bottom: 8px; }
-        .ad-slogan { 
-            font-size: clamp(9px, 3vw, 12px); color: #555; text-align: center; 
+        .ad-slogan {
+            font-size: clamp(9px, 3vw, 12px); color: #555; text-align: center;
             white-space: nowrap; overflow: hidden; margin-bottom: 15px;
         }
         .ad-flex { display: flex; justify-content: space-around; gap: 10px; }
-        .ad-qr-card { 
+        .ad-qr-card {
             background: #fff; padding: 8px; border-radius: 8px; flex: 1; text-align: center;
             border: 1px dashed #ddd;
         }
         .ad-qr-card img { width: 100%; max-width: 100px; aspect-ratio: 1/1; border-radius: 4px; display: block; margin: 0 auto; }
         .ad-qr-card span { display: block; font-size: 11px; font-weight: bold; margin-top: 6px; }
-        
         .footer-warn { font-size: 10px; color: #ee0a24; text-align: center; margin-top: 10px; font-weight: bold; }
 
         #resultCard { display: none; padding-bottom: 30px; }
         .result-title { font-size: 15px; font-weight: bold; margin: 10px 0 10px 5px; color: #111; }
-        .result-item { 
-            background: #fff; border-radius: 12px; padding: 15px; 
+        .result-item {
+            background: #fff; border-radius: 12px; padding: 15px;
             border-left: 5px solid var(--primary); box-shadow: 0 2px 10px rgba(0,0,0,0.02);
             margin-bottom: 12px;
         }
         .badge { display: inline-block; background: #e8f5e9; color: var(--primary); font-size: 11px; padding: 2px 6px; border-radius: 4px; font-weight: bold; margin-bottom: 8px; }
-        
-        .remain-box {
-            background: #fef2f2;
-            border-left: 5px solid #f56c6c;
-            border-radius: 12px;
-            padding: 15px;
-            margin-top: 12px;
-        }
-        .remain-title {
-            font-weight: bold;
-            color: #f56c6c;
-            margin-bottom: 8px;
-            font-size: 13px;
-        }
-        .summary-stat {
-            background: #f0f9ff;
-            border-radius: 12px;
-            padding: 12px;
-            margin-top: 12px;
-            text-align: center;
-        }
-        .summary-stat strong {
-            color: var(--primary);
-            font-size: 18px;
-        }
+        .remain-box { background: #fef2f2; border-left: 5px solid #f56c6c; border-radius: 12px; padding: 15px; margin-top: 12px; }
+        .remain-title { font-weight: bold; color: #f56c6c; margin-bottom: 8px; font-size: 13px; }
+        .summary-stat { background: #f0f9ff; border-radius: 12px; padding: 12px; margin-top: 12px; text-align: center; }
+        .summary-stat strong { color: var(--primary); font-size: 18px; }
     </style>
 </head>
 <body>
-
-<div class="container">
-    <div class="header">
-        <h1>发票凑单智能助手</h1>
-        <p>💡拒绝烧脑 · 一键秒出最佳发票组合，数据不上传。</p>
-    </div>
-
-    <div class="card">
-        <label>📋 输入所有发票金额 (逗号/空格/换行):</label>
-        <textarea id="invoiceInput" placeholder="如: 25.5, 48, 120, 50.8..."></textarea>
-        
-        <div class="setting-row">
-            <span style="font-size: 13px; color: #444; font-weight: bold;">🎯 单张发票目标 (元)</span>
-            <input type="number" id="targetInput" class="input-num" value="100" step="0.01">
+    <div class="container">
+        <div class="header">
+            <h1>发票凑单智能助手</h1>
+            <p class="subtitle">💡拒绝烧脑 · 一键秒出最佳发票组合，数据不上传。</p>
         </div>
 
-        <button onclick="calculateOptimalInvoices()">开启科学计算方案</button>
-    </div>
-
-    <div class="card ad-box">
-        <div class="ad-intro">🎁 算完啦！这里还有个全网省钱终极秘密 👇</div>
-        <div class="ad-slogan">每天搜罗【淘/京/拼】领隐藏券、零元好物、外卖红包等！</div>
-        <div class="ad-flex">
-            <div class="ad-qr-card">
-                <img src="mp.jpg" alt="公众号">
-                <span style="color: #ff9800;">1. 关注公众号</span>
-            </div>
-            <div class="ad-qr-card">
-                <img src="wx.jpg" alt="个人微信">
-                <span style="color: #00b0ff;">2. 加微信进群</span>
-            </div>
+        <!-- ========== 教程按钮行 (新增提取发票金额在最前) ========== -->
+        <div class="guide-buttons-row">
+            <!-- 🆕 提取金额 -->
+            <button class="guide-btn guide-btn-extract" onclick="openGuideModal('extract')" title="查看提取发票金额教程">
+                <span>提取金额</span>
+                <span class="guide-badge">教程</span>
+            </button>
+            <!-- 朴朴超市 -->
+            <button class="guide-btn guide-btn-pupu" onclick="openGuideModal('pupu')" title="查看朴朴超市开票教程">
+                <span>朴朴超市</span>
+                <span class="guide-badge">教程</span>
+            </button>
+            <!-- 小象超市 -->
+            <button class="guide-btn guide-btn-xx" onclick="openGuideModal('xiaoxiang')" title="查看小象超市开票教程">
+                <span>小象超市</span>
+                <span class="guide-badge">教程</span>
+            </button>
         </div>
-        <div class="footer-warn">⚠️ 漏洞单抢完即止，早进群1分钟，多抢一个免单！</div>
-    </div>
 
-    <div id="resultCard">
-        <div class="result-title">💡 最佳凑单方案推荐</div>
-        <div id="resultContent"></div>
-    </div>
-</div>
+        <!-- 输入区 -->
+        <div class="card">
+            <label>📋 输入所有发票金额 (逗号/空格/换行):</label>
+            <textarea id="invoiceInput" placeholder="如: 25.5, 48, 120, 50.8..."></textarea>
+            <div class="setting-row">
+                <span style="font-size: 13px; color: #444; font-weight: bold;">🎯 单张发票目标 (元)</span>
+                <input type="number" id="targetInput" class="input-num" value="100" step="0.01">
+            </div>
+            <button onclick="calculateOptimalInvoices()">开启科学计算方案</button>
+        </div>
 
-<script>
-    // ========== 高效子集和回溯算法 (完全按照用户提供的Python逻辑移植) ==========
-    
-    /**
-     * 寻找严格等于目标值的子集组合 (字典DP + 路径回溯)
-     * @param {number[]} nums 金额池(单位:分)
-     * @param {number} target 目标金额(单位:分)
-     * @returns {number[]|null} 找到的组合数组，未找到返回null
-     */
-    function findSubsetSumPerfect(nums, target) {
-        if (!nums.length) return null;
-        
-        // dp[v] = 达到金额v时，最后一个进入组合的数字在nums中的索引
-        let dp = new Map();
-        dp.set(0, -1);
-        
-        for (let idx = 0; idx < nums.length; idx++) {
-            const val = nums[idx];
-            let newEntries = [];
-            
-            // 遍历当前所有可达到的金额
-            for (let [s, _] of dp) {
-                let newSum = s + val;
-                if (newSum <= target && !dp.has(newSum)) {
-                    newEntries.push([newSum, idx]);
-                }
-            }
-            
-            // 批量添加新条目
-            for (let [newSum, idxVal] of newEntries) {
-                dp.set(newSum, idxVal);
-            }
-            
-            // 只要搜到了目标金额，立即执行路径回溯
-            if (dp.has(target)) {
-                let result = [];
-                let curr = target;
-                while (curr > 0) {
-                    let index = dp.get(curr);
-                    let valFound = nums[index];
-                    result.push(valFound);
-                    curr -= valFound;
-                }
-                return result;
-            }
-        }
-        return null;
-    }
-    
-    /**
-     * 核心凑单逻辑：全局最优解，自动递增档位，产出多组100元整发票
-     * @param {number[]} amounts 原始金额数组(单位:元，浮点数)
-     * @param {number} targetPerInvoice 单张发票目标金额(单位:元)
-     * @returns {object} 计算结果 { groups: 组合数组, remaining: 剩余金额数组, totalGroups: 组数, usedSum: 已用总额 }
-     */
-    function solveInvoiceLogic(amounts, targetPerInvoice) {
-        // 1. 预处理：单位转为分，且从大到小排序（组数最大化的数学核心）
-        let pool = amounts.map(x => Math.round(x * 100)).filter(x => x > 0);
-        pool.sort((a, b) => b - a);
-        
-        let targetCents = Math.round(targetPerInvoice * 100);
-        let finalResults = [];  // 存储 { items: [], total: number }
-        let currentTarget = targetCents;
-        
-        if (targetCents <= 0) {
-            return { groups: [], remaining: pool.map(x => x/100), totalGroups: 0, usedSum: 0 };
-        }
-        
-        console.log(">>> 正在执行全局最优解计算，请稍候...");
-        
-        while (true) {
-            // 终止条件：剩余总金额不足目标金额，物理上无法再凑
-            let poolSum = pool.reduce((a, b) => a + b, 0);
-            if (poolSum < targetCents) {
-                break;
-            }
-            
-            let foundFlag = false;
-            
-            // 在当前档位下，尽可能搜刮所有可成的组合
-            while (true) {
-                let combo = findSubsetSumPerfect(pool, currentTarget);
-                
-                if (combo) {
-                    finalResults.push({
-                        items: combo.map(x => x / 100.0),
-                        total: currentTarget / 100.0
-                    });
-                    // 从池子中精准移除已用金额
-                    for (let val of combo) {
-                        let idx = pool.indexOf(val);
-                        if (idx !== -1) pool.splice(idx, 1);
-                    }
-                    // 重新排序，维持大额优先的优势
-                    pool.sort((a, b) => b - a);
-                    foundFlag = true;
-                    console.log(`[匹配成功] 档位: ${(currentTarget/100.0).toFixed(2)} 元 | 已成: ${finalResults.length} 组`);
-                } else {
-                    // 当前档位确实找不到了，跳出当前金额的搜刮
-                    break;
-                }
-            }
-            
-            // 档位递增：每次增加1分钱
-            currentTarget += 1;
-            
-            // 安全退出：当档位已经高于剩余所有钱的总和
-            let remainingSum = pool.reduce((a, b) => a + b, 0);
-            if (currentTarget > remainingSum) {
-                break;
-            }
-            
-            // 防止无限循环（最多递增10000次，即100元）
-            if (currentTarget > targetCents + 50000) {
-                break;
-            }
-        }
-        
-        // 计算已使用总额
-        let usedSum = finalResults.reduce((sum, group) => sum + (group.total * 100), 0);
-        let remainingCents = pool;
-        
-        return {
-            groups: finalResults,
-            remaining: remainingCents.map(x => x / 100.0),
-            totalGroups: finalResults.length,
-            usedSum: usedSum / 100.0
-        };
-    }
-    
-    // ========== UI交互入口 (完全按照新计算核心渲染) ==========
-    function calculateOptimalInvoices() {
-        const rawInput = document.getElementById('invoiceInput').value;
-        const targetInput = document.getElementById('targetInput').value;
-        
-        const targetPerInvoice = parseFloat(targetInput);
-        if (isNaN(targetPerInvoice) || targetPerInvoice <= 0) {
-            alert("请输入有效的目标金额！");
-            return;
-        }
-        
-        // 解析所有发票金额
-        const invoices = rawInput.replace(/，/g, ',')
-                            .split(/[\s,]+/)
-                            .map(x => parseFloat(x))
-                            .filter(x => !isNaN(x) && x > 0);
-        
-        if (invoices.length === 0) {
-            alert("请至少输入一个有效的发票金额！");
-            return;
-        }
-        
-        // 计算总额
-        const totalSum = invoices.reduce((a, b) => a + b, 0);
-        const resultCard = document.getElementById('resultCard');
-        const resultContent = document.getElementById('resultContent');
-        
-        // 执行核心凑单算法
-        const result = solveInvoiceLogic(invoices, targetPerInvoice);
-        
-        // 构建结果HTML
-        let html = '';
-        
-        if (result.groups.length === 0) {
-            // 没有任何一组能凑出来
-            if (totalSum < targetPerInvoice) {
-                html = `
-                    <div class="result-item" style="border-left-color: #f56c6c;">
-                        <span class="badge" style="background:#fef0f0; color:#f56c6c;">算力极限</span>
-                        <p style="margin: 3px 0 0 0; font-size: 13px;">发票总额 <strong>${totalSum.toFixed(2)}</strong> 元，不够凑齐单张目标金额 ${targetPerInvoice.toFixed(2)} 元。</p>
-                    </div>
-                `;
-            } else {
-                html = `
-                    <div class="result-item" style="border-left-color: #f56c6c;">
-                        <span class="badge" style="background:#fef0f0; color:#f56c6c;">无法凑整</span>
-                        <p style="margin: 3px 0 0 0; font-size: 13px;">当前发票金额无法精确凑出任何一组 ${targetPerInvoice.toFixed(2)} 元的组合。</p>
-                    </div>
-                `;
-                // 显示剩余明细
-                if (result.remaining.length > 0) {
-                    html += `
-                        <div class="remain-box">
-                            <div class="remain-title">📋 剩余无法凑单明细</div>
-                            <p style="margin: 4px 0; font-size: 12px; color: #666;">剩余金额: ${result.remaining.map(r => r.toFixed(2)).join(', ')} 元</p>
-                            <p style="margin: 4px 0; font-size: 12px; color: #666;">剩余总额: <strong>${result.remaining.reduce((a,b)=>a+b,0).toFixed(2)}</strong> 元</p>
-                        </div>
-                    `;
-                }
-            }
-        } else {
-            // 有成功凑出的组合，展示所有组
-            for (let i = 0; i < result.groups.length; i++) {
-                const group = result.groups[i];
-                const itemsStr = group.items.map(x => `<b style="color:#07c160;">${x.toFixed(2)}</b>`).join(' + ');
-                html += `
-                    <div class="result-item">
-                        <span class="badge">🎯 第 ${i+1} 组发票</span>
-                        <p style="margin: 4px 0; font-size: 13px; line-height: 1.5;">
-                            <strong>金额明细：</strong> ${itemsStr} 元
-                        </p>
-                        <p style="margin: 8px 0 4px 0; font-size: 14px;">
-                            <strong>方案总额：</strong>
-                            <span style="color:#07c160; font-size:20px; font-weight:900;">${group.total.toFixed(2)}</span> 元
-                        </p>
-                    </div>
-                `;
-            }
-            
-            // 汇总统计
-            html += `
-                <div class="summary-stat">
-                    <p style="margin: 0 0 6px 0; font-size: 13px; color: #444;">📊 凑单统计</p>
-                    <p style="margin: 4px 0; font-size: 14px;">
-                        成功凑出 <strong style="color: var(--primary); font-size: 20px;">${result.totalGroups}</strong> 组 
-                        <span style="color: #666;">(${targetPerInvoice.toFixed(2)}元/组)</span>
-                    </p>
-                    <p style="margin: 4px 0; font-size: 13px; color: #666;">
-                        已使用总额：<strong>${result.usedSum.toFixed(2)}</strong> 元
-                    </p>
+        <!-- 广告区 -->
+        <div class="card ad-box">
+            <div class="ad-intro">🎁 算完啦！这里还有个全网省钱终极秘密 👇</div>
+            <div class="ad-slogan">每天搜罗【淘/京/拼】领隐藏券、零元好物、外卖红包等！</div>
+            <div class="ad-flex">
+                <div class="ad-qr-card">
+                    <img src="mp.jpg" alt="公众号">
+                    <span style="color: #ff9800;">1. 关注公众号</span>
                 </div>
-            `;
-            
-            // 剩余无法凑单部分
-            if (result.remaining.length > 0) {
-                const remainSum = result.remaining.reduce((a, b) => a + b, 0);
-                html += `
-                    <div class="remain-box">
-                        <div class="remain-title">📋 剩余无法凑单明细</div>
-                        <p style="margin: 4px 0; font-size: 12px; color: #666;">剩余金额: ${result.remaining.map(r => r.toFixed(2)).join(', ')} 元</p>
-                        <p style="margin: 4px 0; font-size: 12px; color: #666;">剩余总额: <strong>${remainSum.toFixed(2)}</strong> 元</p>
-                        <p style="margin: 8px 0 0 0; font-size: 11px; color: #999;">💡 提示：剩余金额无法精确凑出 ${targetPerInvoice.toFixed(2)} 元整的发票</p>
-                    </div>
-                `;
-            } else {
-                // 完美凑完
-                html += `
-                    <div class="summary-stat" style="background: #e8f5e9;">
-                        <p style="margin: 0; font-size: 13px; color: var(--primary);">🎉 完美！所有金额均已用尽，无任何剩余！</p>
-                    </div>
-                `;
+                <div class="ad-qr-card">
+                    <img src="wx.jpg" alt="个人微信">
+                    <span style="color: #00b0ff;">2. 加微信进群</span>
+                </div>
+            </div>
+            <div class="footer-warn">⚠️ 漏洞单抢完即止，早进群1分钟，多抢一个免单！</div>
+        </div>
+
+        <!-- 结果展示 -->
+        <div id="resultCard">
+            <div class="result-title">💡 最佳凑单方案推荐</div>
+            <div id="resultContent"></div>
+        </div>
+    </div>
+
+    <!-- 模态框 -->
+    <div id="guideModalOverlay" class="modal-overlay" style="display: none;" onclick="closeGuideModal(event)">
+        <div class="modal-dialog" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeGuideModalDirect()" title="关闭">✕</button>
+            <div class="modal-title" id="guideModalTitle">开票教程</div>
+            <div class="modal-image-wrapper" id="guideImageWrapper">
+                <img id="guideModalImage" src="" alt="教程图片">
+                <div class="modal-image-fallback" id="guideImageFallback">
+                    😕 图片未找到<br><small>请确认图片文件已放置在正确位置</small>
+                </div>
+            </div>
+            <p class="modal-tip">💡 点击图片可放大查看，点击遮罩或 ✕ 关闭</p>
+        </div>
+    </div>
+
+    <script>
+        // ========== 教程数据配置 ==========
+        const guideData = {
+            // 🆕 提取发票金额教程
+            'extract': {
+                title: '📋 提取发票金额教程',
+                // ⚠️ 图片命名：请将提取发票金额的教程图片命名为 extract_invoice_guide.jpg
+                imageSrc: 'extract_invoice_guide.jpg',
+                fallbackMsg: '请将提取发票金额教程图片保存为\n"extract_invoice_guide.jpg"\n并放在HTML文件同一目录'
+            },
+            'pupu': {
+                title: '🛒 朴朴超市开票方法',
+                imageSrc: 'pupu_guide.jpg',
+                fallbackMsg: '请将朴朴超市开票教程图片保存为\n"pupu_guide.jpg"\n并放在HTML文件同一目录'
+            },
+            'xiaoxiang': {
+                title: '🐘 小象超市开票方法',
+                imageSrc: 'xiaoxiang_guide.jpg',
+                fallbackMsg: '请将小象超市开票教程图片保存为\n"xiaoxiang_guide.jpg"\n并放在HTML文件同一目录'
+            }
+        };
+
+        let currentGuideKey = null;
+
+        function openGuideModal(key) {
+            const data = guideData[key];
+            if (!data) return;
+            currentGuideKey = key;
+            const overlay = document.getElementById('guideModalOverlay');
+            const titleEl = document.getElementById('guideModalTitle');
+            const imgEl = document.getElementById('guideModalImage');
+            const fallbackEl = document.getElementById('guideImageFallback');
+
+            titleEl.textContent = data.title;
+            imgEl.src = data.imageSrc;
+            imgEl.style.display = 'block';
+            fallbackEl.style.display = 'none';
+
+            imgEl.onerror = function() {
+                imgEl.style.display = 'none';
+                fallbackEl.style.display = 'block';
+                fallbackEl.innerHTML = '😕 图片未找到<br><small>' + data.fallbackMsg.replace(/\n/g, '<br>') + '</small>';
+            };
+            imgEl.onload = function() {
+                imgEl.style.display = 'block';
+                fallbackEl.style.display = 'none';
+            };
+
+            overlay.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            const dialog = overlay.querySelector('.modal-dialog');
+            if (dialog) dialog.scrollTop = 0;
+        }
+
+        function closeGuideModal(event) {
+            if (event.target === document.getElementById('guideModalOverlay')) {
+                closeGuideModalDirect();
             }
         }
-        
-        resultContent.innerHTML = html;
-        resultCard.style.display = 'block';
-        
-        // 平滑滚动到结果区域
-        setTimeout(() => {
-            resultCard.scrollIntoView({ behavior: 'smooth' });
-        }, 120);
-    }
-</script>
+
+        function closeGuideModalDirect() {
+            const overlay = document.getElementById('guideModalOverlay');
+            overlay.style.display = 'none';
+            document.body.style.overflow = '';
+            currentGuideKey = null;
+            const imgEl = document.getElementById('guideModalImage');
+            imgEl.src = '';
+            imgEl.onerror = null;
+            imgEl.onload = null;
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && currentGuideKey) {
+                closeGuideModalDirect();
+            }
+        });
+
+        // ========== 原有凑单算法 (保持不变) ==========
+        function findSubsetSumPerfect(nums, target) {
+            if (!nums.length) return null;
+            let dp = new Map();
+            dp.set(0, -1);
+            for (let idx = 0; idx < nums.length; idx++) {
+                const val = nums[idx];
+                let newEntries = [];
+                for (let [s, _] of dp) {
+                    let newSum = s + val;
+                    if (newSum <= target && !dp.has(newSum)) {
+                        newEntries.push([newSum, idx]);
+                    }
+                }
+                for (let [newSum, idxVal] of newEntries) {
+                    dp.set(newSum, idxVal);
+                }
+                if (dp.has(target)) {
+                    let result = [];
+                    let curr = target;
+                    while (curr > 0) {
+                        let index = dp.get(curr);
+                        let valFound = nums[index];
+                        result.push(valFound);
+                        curr -= valFound;
+                    }
+                    return result;
+                }
+            }
+            return null;
+        }
+
+        function solveInvoiceLogic(amounts, targetPerInvoice) {
+            let pool = amounts.map(x => Math.round(x * 100)).filter(x => x > 0);
+            pool.sort((a, b) => b - a);
+            let targetCents = Math.round(targetPerInvoice * 100);
+            let finalResults = [];
+            let currentTarget = targetCents;
+            if (targetCents <= 0) {
+                return { groups: [], remaining: pool.map(x => x/100), totalGroups: 0, usedSum: 0 };
+            }
+            while (true) {
+                let poolSum = pool.reduce((a, b) => a + b, 0);
+                if (poolSum < targetCents) break;
+                let foundFlag = false;
+                while (true) {
+                    let combo = findSubsetSumPerfect(pool, currentTarget);
+                    if (combo) {
+                        finalResults.push({
+                            items: combo.map(x => x / 100.0),
+                            total: currentTarget / 100.0
+                        });
+                        for (let val of combo) {
+                            let idx = pool.indexOf(val);
+                            if (idx !== -1) pool.splice(idx, 1);
+                        }
+                        pool.sort((a, b) => b - a);
+                        foundFlag = true;
+                    } else {
+                        break;
+                    }
+                }
+                currentTarget += 1;
+                let remainingSum = pool.reduce((a, b) => a + b, 0);
+                if (currentTarget > remainingSum) break;
+                if (currentTarget > targetCents + 50000) break;
+            }
+            let usedSum = finalResults.reduce((sum, group) => sum + (group.total * 100), 0);
+            return {
+                groups: finalResults,
+                remaining: pool.map(x => x / 100.0),
+                totalGroups: finalResults.length,
+                usedSum: usedSum / 100.0
+            };
+        }
+
+        function calculateOptimalInvoices() {
+            const rawInput = document.getElementById('invoiceInput').value;
+            const targetInput = document.getElementById('targetInput').value;
+            const targetPerInvoice = parseFloat(targetInput);
+            if (isNaN(targetPerInvoice) || targetPerInvoice <= 0) {
+                alert("请输入有效的目标金额！");
+                return;
+            }
+            const invoices = rawInput.replace(/，/g, ',').split(/[\s,]+/).map(x => parseFloat(x)).filter(x => !isNaN(x) && x > 0);
+            if (invoices.length === 0) {
+                alert("请至少输入一个有效的发票金额！");
+                return;
+            }
+            const totalSum = invoices.reduce((a, b) => a + b, 0);
+            const resultCard = document.getElementById('resultCard');
+            const resultContent = document.getElementById('resultContent');
+            const result = solveInvoiceLogic(invoices, targetPerInvoice);
+            let html = '';
+            if (result.groups.length === 0) {
+                if (totalSum < targetPerInvoice) {
+                    html = `<div class="result-item" style="border-left-color: #f56c6c;"><span class="badge" style="background:#fef0f0; color:#f56c6c;">算力极限</span><p style="margin: 3px 0 0 0; font-size: 13px;">发票总额 <strong>${totalSum.toFixed(2)}</strong> 元，不够凑齐单张目标金额 ${targetPerInvoice.toFixed(2)} 元。</p></div>`;
+                } else {
+                    html = `<div class="result-item" style="border-left-color: #f56c6c;"><span class="badge" style="background:#fef0f0; color:#f56c6c;">无法凑整</span><p style="margin: 3px 0 0 0; font-size: 13px;">当前发票金额无法精确凑出任何一组 ${targetPerInvoice.toFixed(2)} 元的组合。</p></div>`;
+                    if (result.remaining.length > 0) {
+                        html += `<div class="remain-box"><div class="remain-title">📋 剩余无法凑单明细</div><p style="margin: 4px 0; font-size: 12px; color: #666;">剩余金额: ${result.remaining.map(r => r.toFixed(2)).join(', ')} 元</p><p style="margin: 4px 0; font-size: 12px; color: #666;">剩余总额: <strong>${result.remaining.reduce((a,b)=>a+b,0).toFixed(2)}</strong> 元</p></div>`;
+                    }
+                }
+            } else {
+                for (let i = 0; i < result.groups.length; i++) {
+                    const group = result.groups[i];
+                    const itemsStr = group.items.map(x => `<b style="color:#07c160;">${x.toFixed(2)}</b>`).join(' + ');
+                    html += `<div class="result-item"><span class="badge">🎯 第 ${i+1} 组发票</span><p style="margin: 4px 0; font-size: 13px; line-height: 1.5;"><strong>金额明细：</strong> ${itemsStr} 元</p><p style="margin: 8px 0 4px 0; font-size: 14px;"><strong>方案总额：</strong><span style="color:#07c160; font-size:20px; font-weight:900;">${group.total.toFixed(2)}</span> 元</p></div>`;
+                }
+                html += `<div class="summary-stat"><p style="margin: 0 0 6px 0; font-size: 13px; color: #444;">📊 凑单统计</p><p style="margin: 4px 0; font-size: 14px;">成功凑出 <strong style="color: var(--primary); font-size: 20px;">${result.totalGroups}</strong> 组 <span style="color: #666;">(${targetPerInvoice.toFixed(2)}元/组)</span></p><p style="margin: 4px 0; font-size: 13px; color: #666;">已使用总额：<strong>${result.usedSum.toFixed(2)}</strong> 元</p></div>`;
+                if (result.remaining.length > 0) {
+                    const remainSum = result.remaining.reduce((a, b) => a + b, 0);
+                    html += `<div class="remain-box"><div class="remain-title">📋 剩余无法凑单明细</div><p style="margin: 4px 0; font-size: 12px; color: #666;">剩余金额: ${result.remaining.map(r => r.toFixed(2)).join(', ')} 元</p><p style="margin: 4px 0; font-size: 12px; color: #666;">剩余总额: <strong>${remainSum.toFixed(2)}</strong> 元</p><p style="margin: 8px 0 0 0; font-size: 11px; color: #999;">💡 提示：剩余金额无法精确凑出 ${targetPerInvoice.toFixed(2)} 元整的发票</p></div>`;
+                } else {
+                    html += `<div class="summary-stat" style="background: #e8f5e9;"><p style="margin: 0; font-size: 13px; color: var(--primary);">🎉 完美！所有金额均已用尽，无任何剩余！</p></div>`;
+                }
+            }
+            resultContent.innerHTML = html;
+            resultCard.style.display = 'block';
+            setTimeout(() => { resultCard.scrollIntoView({ behavior: 'smooth' }); }, 120);
+        }
+    </script>
 </body>
 </html>
