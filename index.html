@@ -120,7 +120,6 @@
             flex-direction: column;
             gap: 5px;
         }
-        /* 压缩每行高度 */
         .link-row {
             display: flex;
             align-items: center;
@@ -178,7 +177,7 @@
             border-top: 1px solid #e2e8f0;
         }
 
-        /* ========== 发票页面样式（来自"增加图片及密码功能.html"） ========== */
+        /* ========== 发票页面样式 ========== */
         .invoice-body {
             background-color: var(--bg);
             display: flex;
@@ -221,19 +220,19 @@
         }
         .guide-btn {
             flex: 1;
-            min-width: 100px;
+            min-width: 80px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            padding: 12px 8px;
+            gap: 4px;
+            padding: 10px 6px;
             border-radius: 12px;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s ease;
             border: none;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
             -webkit-tap-highlight-color: transparent;
             user-select: none;
             position: relative;
@@ -249,13 +248,13 @@
             border: 1.5px solid #90caf9;
             box-shadow: 0 2px 8px rgba(13,71,161,0.10);
         }
-        .guide-btn-pupu {
+        .guide-btn-combined {
             background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
             color: #2e7d32;
             border: 1.5px solid #a5d6a7;
             box-shadow: 0 2px 8px rgba(46,125,50,0.10);
         }
-        .guide-btn-xx {
+        .guide-btn-city {
             background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
             color: #e65100;
             border: 1.5px solid #ffcc80;
@@ -271,8 +270,8 @@
             font-weight: 600;
             letter-spacing: 1px;
         }
-        .guide-btn-pupu .guide-badge { background: #2e7d32; }
-        .guide-btn-xx .guide-badge { background: #e65100; }
+        .guide-btn-combined .guide-badge { background: #2e7d32; }
+        .guide-btn-city .guide-badge { background: #e65100; }
 
         /* 弹窗通用 */
         .modal-overlay {
@@ -348,6 +347,7 @@
             overflow: hidden;
             background: #fafafa;
             padding: 4px;
+            margin-bottom: 10px;
         }
         .modal-image-wrapper img {
             width: 100%;
@@ -358,18 +358,73 @@
             display: block;
             margin: 0 auto;
         }
-        .modal-image-fallback {
-            display: none;
-            text-align: center;
-            padding: 40px 20px;
-            color: #999;
+        .modal-image-wrapper .img-separator {
+            margin: 12px 0;
             font-size: 13px;
+            color: #555;
+            border-top: 1px dashed #ddd;
+            padding-top: 12px;
+            text-align: center;
+            font-weight: 600;
+        }
+        .modal-content-wrapper {
+            padding: 6px 0;
+        }
+        .modal-content-wrapper h4 {
+            font-size: 14px;
+            margin: 10px 0 6px;
+            color: #1a3a6b;
+        }
+        .modal-content-wrapper .city-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 8px;
+            margin: 4px 0 8px;
+        }
+        .modal-content-wrapper .city-tags span {
+            background: #f0f4f8;
+            padding: 2px 12px;
+            border-radius: 20px;
+            border: 1px solid #dce4ec;
+            font-size: 12px;
+            line-height: 1.8;
+            color: #2c3e50;
+        }
+        .modal-content-wrapper .platform-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 10px;
+            margin-top: 4px;
+        }
+        .modal-content-wrapper .platform-list span {
+            background: #ffffff;
+            padding: 2px 12px;
+            border-radius: 20px;
+            border: 1px solid #cbd5e1;
+            font-size: 12px;
+            line-height: 1.8;
+        }
+        .modal-content-wrapper .city-group-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1a3a6b;
+            margin: 8px 0 4px;
+        }
+        .modal-content-wrapper .city-group-label:first-of-type {
+            margin-top: 0;
         }
         .modal-tip {
             text-align: center;
             font-size: 11px;
             color: #aaa;
             margin-top: 10px;
+        }
+        .modal-image-fallback {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+            font-size: 13px;
         }
 
         /* 发票卡片 */
@@ -615,6 +670,20 @@
             opacity: 0.8;
             transform: scale(0.98);
         }
+
+        /* 风控/限流弹窗 */
+        #rateLimitModalOverlay .modal-dialog {
+            text-align: center;
+        }
+        #rateLimitModalOverlay .modal-dialog h3 {
+            margin: 10px 0 5px;
+            font-size: 18px;
+        }
+        #rateLimitModalOverlay .modal-dialog p {
+            font-size: 13px;
+            color: #666;
+            margin: 5px 0;
+        }
     </style>
 </head>
 <body>
@@ -625,14 +694,14 @@
     <div class="nav-btn" id="navInvoiceBtn">🧾 发票凑单工具</div>
 </div>
 
-<!-- ================= 主页：已根据最新链接全面更新 ================= -->
+<!-- ================= 主页 ================= -->
 <div id="homePage" class="page active-page">
     <div class="hero">
         <h2>📱 外卖｜出行｜酒店｜省钱福利</h2>
         <p>💡 每日可领 · 极速预览 · 无多余留白</p>
     </div>
 
-    <!-- 1. 打车·流量卡（链接已更新） -->
+    <!-- 1. 打车·流量卡 -->
     <div class="section-card">
         <div class="section-title">🚗 打车 · 流量卡</div>
         <div class="link-grid">
@@ -651,7 +720,7 @@
         </div>
     </div>
 
-    <!-- 2. 美团特惠专区（链接已全部更新，删除了失效的机票/火车票券） -->
+    <!-- 2. 美团特惠专区 -->
     <div class="section-card">
         <div class="section-title">🍜 美团特惠专区</div>
         <div class="link-grid">
@@ -666,7 +735,7 @@
         </div>
     </div>
 
-    <!-- 3. 饿了么·淘宝闪购（链接已全部更新，增加了新活动） -->
+    <!-- 3. 饿了么·淘宝闪购 -->
     <div class="section-card">
         <div class="section-title">🍟 饿了么 · 淘宝闪购</div>
         <div class="link-grid">
@@ -683,7 +752,7 @@
         </div>
     </div>
 
-    <!-- 4. 京东外卖专区（链接已全部更新） -->
+    <!-- 4. 京东外卖专区 -->
     <div class="section-card">
         <div class="section-title">🛒 京东外卖专区</div>
         <div class="link-grid">
@@ -697,7 +766,7 @@
         </div>
     </div>
 
-    <!-- 5. 携程出行预订（链接保持不变） -->
+    <!-- 5. 携程出行预订 -->
     <div class="section-card">
         <div class="section-title">✈️ 携程出行预订 · 全网低价</div>
         <div class="link-grid">
@@ -715,7 +784,7 @@
     <div class="footer-note">📌 每日更新 · 点击直达 · 极简省流版</div>
 </div>
 
-<!-- ================= 副页：发票凑单工具（功能不变） ================= -->
+<!-- ================= 副页：发票凑单工具 ================= -->
 <div id="invoicePage" class="page">
     <div class="invoice-body">
         <div class="invoice-container">
@@ -729,11 +798,11 @@
                 <button class="guide-btn guide-btn-extract" onclick="openGuideModal('extract')" title="查看提取发票金额教程">
                     <span>提取金额</span><span class="guide-badge">教程</span>
                 </button>
-                <button class="guide-btn guide-btn-pupu" onclick="openGuideModal('pupu')" title="查看朴朴超市开票教程">
-                    <span>朴朴超市</span><span class="guide-badge">教程</span>
+                <button class="guide-btn guide-btn-combined" onclick="openGuideModal('combined')" title="查看朴朴和小象开票方法">
+                    <span>开票合并</span><span class="guide-badge">教程</span>
                 </button>
-                <button class="guide-btn guide-btn-xx" onclick="openGuideModal('xiaoxiang')" title="查看小象超市开票教程">
-                    <span>小象超市</span><span class="guide-badge">教程</span>
+                <button class="guide-btn guide-btn-city" onclick="openGuideModal('city')" title="查看支持抽奖城市和合并开票平台">
+                    <span>发票指南</span><span class="guide-badge">50城</span>
                 </button>
             </div>
 
@@ -782,14 +851,22 @@
 <div id="guideModalOverlay" class="modal-overlay" style="display:none;" onclick="closeGuideModal(event)">
     <div class="modal-dialog" onclick="event.stopPropagation()">
         <button class="modal-close" onclick="closeGuideModalDirect()" title="关闭">✕</button>
-        <div class="modal-title" id="guideModalTitle">开票教程</div>
-        <div class="modal-image-wrapper" id="guideImageWrapper">
-            <img id="guideModalImage" src="" alt="教程图片">
+        <div class="modal-title" id="guideModalTitle">教程</div>
+        <!-- 图片区域 -->
+        <div id="guideImageWrapper" class="modal-image-wrapper" style="display:none;">
+            <!-- 朴朴分隔线 -->
+            <div id="guideImageSeparator1" class="img-separator" style="display:none;">———— 朴朴超市开票方法 ————</div>
+            <img id="guideModalImage1" src="" alt="教程图片1" style="display:none;">
+            <!-- 小象分隔线 -->
+            <div id="guideImageSeparator2" class="img-separator" style="display:none;">———— 小象超市开票方法 ————</div>
+            <img id="guideModalImage2" src="" alt="教程图片2" style="display:none;">
             <div class="modal-image-fallback" id="guideImageFallback">
                 😕 图片未找到<br><small>请确认图片文件已放置在正确位置</small>
             </div>
         </div>
-        <p class="modal-tip">💡 点击图片可放大查看，点击遮罩或 ✕ 关闭</p>
+        <!-- 文字内容区域 -->
+        <div id="guideContentWrapper" class="modal-content-wrapper" style="display:none;"></div>
+        <p class="modal-tip" id="guideModalTip">💡 点击遮罩或 ✕ 关闭</p>
     </div>
 </div>
 
@@ -809,14 +886,25 @@
     </div>
 </div>
 
-<!-- ===== 配额弹窗 ===== -->
+<!-- ===== 配额弹窗（每日额度用尽） ===== -->
 <div id="quotaModalOverlay" class="modal-overlay" style="display:none;" onclick="closeQuotaModal(event)">
     <div class="modal-dialog" onclick="event.stopPropagation()" style="text-align:center;">
         <button class="modal-close" onclick="closeQuotaModalDirect()">✕</button>
         <h3 style="margin:10px 0; font-size:18px;">⏳ 今日识别次数已用完</h3>
-        <p style="font-size:13px; color:#666; margin:5px 0;">为了防止滥用和机器人，当前网络今日的免费额度已用完。</p>
-        <p style="font-size:13px; color:#666; margin:5px 0;">建议切换WiFi/4G网络，或明日零点后自动恢复。</p>
+        <p style="font-size:13px; color:#666; margin:5px 0;">当前IP的免费额度已用完，请切换WiFi/4G网络，或明日零点后自动恢复。</p>
+        <p style="font-size:13px; color:#666; margin:5px 0;">建议切换网络后重试。</p>
         <button class="unlock-btn" style="margin-top:15px;" onclick="closeQuotaModalDirect()">知道了</button>
+    </div>
+</div>
+
+<!-- ===== 风控/限流弹窗（429） ===== -->
+<div id="rateLimitModalOverlay" class="modal-overlay" style="display:none;" onclick="closeRateLimitModal(event)">
+    <div class="modal-dialog" onclick="event.stopPropagation()" style="text-align:center;">
+        <button class="modal-close" onclick="closeRateLimitModalDirect()">✕</button>
+        <h3 style="margin:10px 0; font-size:18px;">⏳ 请求过于频繁</h3>
+        <p style="font-size:13px; color:#666; margin:5px 0;">检测到短时间内提交过多识别请求，为防止被误判为机器人，建议您暂停约 <strong>30分钟</strong> 后再试。</p>
+        <p style="font-size:13px; color:#666; margin:5px 0;">您也可以尝试切换WiFi/4G网络后继续使用。</p>
+        <button class="unlock-btn" style="margin-top:15px;" onclick="closeRateLimitModalDirect()">知道了</button>
     </div>
 </div>
 
@@ -857,18 +945,74 @@
     const guideData = {
         'extract': {
             title: '📋 提取发票金额教程',
-            imageSrc: 'extract_invoice_guide.jpg',
-            fallbackMsg: '请将提取发票金额教程图片保存为\n"extract_invoice_guide.jpg"\n并放在HTML文件同一目录'
+            type: 'image',
+            images: ['extract_invoice_guide.jpg'],
+            fallbackMsg: '请将提取发票金额教程图片保存为\n"extract_invoice_guide.jpg"\n并放在HTML文件同一目录',
+            tip: '💡 点击遮罩或 ✕ 关闭'
         },
-        'pupu': {
-            title: '🛒 朴朴超市开票方法',
-            imageSrc: 'pupu_guide.jpg',
-            fallbackMsg: '请将朴朴超市开票教程图片保存为\n"pupu_guide.jpg"\n并放在HTML文件同一目录'
+        'combined': {
+            title: '🛒 开票方法示例',
+            type: 'image',
+            images: ['pupu_guide.jpg', 'xiaoxiang_guide.jpg'],
+            labels: ['朴朴超市', '小象超市'],
+            fallbackMsg: '请将朴朴和小象教程图片保存为\n"pupu_guide.jpg" 和 "xiaoxiang_guide.jpg"\n并放在HTML文件同一目录',
+            tip: '💡 上下滑动查看，点击遮罩或 ✕ 关闭'
         },
-        'xiaoxiang': {
-            title: '🐘 小象超市开票方法',
-            imageSrc: 'xiaoxiang_guide.jpg',
-            fallbackMsg: '请将小象超市开票教程图片保存为\n"xiaoxiang_guide.jpg"\n并放在HTML文件同一目录'
+        'city': {
+            title: '📌 有奖发票指南（2026年6月）',
+            type: 'content',
+            content: `
+                <p style="font-size:13px; color:#444; margin:0 0 10px;">根据官方公布信息，目前全国共有 <strong>50个</strong> 城市正在开展有奖发票试点工作：</p>
+
+                <div class="city-group-label">📍 直辖市（4个）</div>
+                <div class="city-tags">
+                    <span>北京</span><span>天津</span><span>上海</span><span>重庆</span>
+                </div>
+
+                <div class="city-group-label">📍 计划单列市（5个）</div>
+                <div class="city-tags">
+                    <span>大连</span><span>青岛</span><span>宁波</span><span>厦门</span><span>深圳</span>
+                </div>
+
+                <div class="city-group-label">📍 其他城市（41个）</div>
+                <div class="city-tags">
+                    <span>石家庄</span><span>邯郸</span><span>太原</span><span>呼和浩特</span>
+                    <span>沈阳</span><span>长春</span><span>大庆</span>
+                    <span>南京</span><span>无锡</span><span>苏州</span>
+                    <span>湖州</span><span>绍兴</span><span>衢州</span>
+                    <span>合肥</span><span>黄山</span>
+                    <span>福州</span><span>泉州</span>
+                    <span>赣州</span>
+                    <span>济南</span><span>烟台</span>
+                    <span>郑州</span><span>开封</span>
+                    <span>武汉</span><span>宜昌</span>
+                    <span>株洲</span><span>湘潭</span>
+                    <span>广州</span><span>东莞</span><span>江门</span>
+                    <span>南宁</span>
+                    <span>海口</span>
+                    <span>成都</span><span>泸州</span>
+                    <span>遵义</span>
+                    <span>昆明</span>
+                    <span>拉萨</span>
+                    <span>咸阳</span>
+                    <span>兰州</span>
+                    <span>西宁</span>
+                    <span>银川</span>
+                    <span>乌鲁木齐</span>
+                </div>
+
+                <h4 style="margin-top:16px;">🧾 支持合并开票的平台</h4>
+                <div class="platform-list">
+                    <span>朴朴超市</span><span>小象超市(美团)</span><span>盒马</span>
+                    <span>叮咚买菜</span><span>沃尔玛</span><span>山姆</span>
+                    <span>天虹</span><span>奈雪</span><span>喜茶</span>
+                    <span>霸王茶姬</span><span>肯德基</span><span>麦当劳</span>
+                    <span>海底捞</span><span>费大厨</span><span>迪卡侬</span>
+                    <span>manner</span><span>寿司郎</span>
+                </div>
+                <p style="font-size:12px; color:#888; margin-top:12px;">💡 将多个订单金额输入助手，一键算出最优组合</p>
+            `,
+            tip: '💡 点击遮罩或 ✕ 关闭'
         }
     };
     let currentGuideKey = null;
@@ -879,21 +1023,71 @@
         currentGuideKey = key;
         const overlay = document.getElementById('guideModalOverlay');
         const titleEl = document.getElementById('guideModalTitle');
-        const imgEl = document.getElementById('guideModalImage');
-        const fallbackEl = document.getElementById('guideImageFallback');
+        const imgWrapper = document.getElementById('guideImageWrapper');
+        const contentWrapper = document.getElementById('guideContentWrapper');
+        const img1 = document.getElementById('guideModalImage1');
+        const img2 = document.getElementById('guideModalImage2');
+        const sep1 = document.getElementById('guideImageSeparator1');
+        const sep2 = document.getElementById('guideImageSeparator2');
+        const fallback = document.getElementById('guideImageFallback');
+        const tip = document.getElementById('guideModalTip');
+
         titleEl.textContent = data.title;
-        imgEl.src = data.imageSrc;
-        imgEl.style.display = 'block';
-        fallbackEl.style.display = 'none';
-        imgEl.onerror = function() {
-            imgEl.style.display = 'none';
-            fallbackEl.style.display = 'block';
-            fallbackEl.innerHTML = '😕 图片未找到<br><small>' + data.fallbackMsg.replace(/\n/g, '<br>') + '</small>';
-        };
-        imgEl.onload = function() {
-            imgEl.style.display = 'block';
-            fallbackEl.style.display = 'none';
-        };
+        tip.textContent = data.tip || '💡 点击遮罩或 ✕ 关闭';
+
+        // 重置显示
+        imgWrapper.style.display = 'none';
+        contentWrapper.style.display = 'none';
+        img1.style.display = 'none';
+        img2.style.display = 'none';
+        sep1.style.display = 'none';
+        sep2.style.display = 'none';
+        fallback.style.display = 'none';
+        contentWrapper.innerHTML = '';
+
+        if (data.type === 'image') {
+            imgWrapper.style.display = 'block';
+            const images = data.images;
+            const labels = data.labels || [];
+
+            if (images.length >= 1) {
+                // 判断是否为 combined（开票合并教程）
+                if (key === 'combined') {
+                    // 显示朴朴分隔线
+                    sep1.style.display = 'block';
+                    sep1.textContent = '———— ' + (labels[0] || '朴朴超市') + '开票方法 ————';
+                }
+
+                img1.style.display = 'block';
+                img1.src = images[0];
+                img1.onerror = function() {
+                    img1.style.display = 'none';
+                    if (key === 'combined') sep1.style.display = 'none';
+                    fallback.style.display = 'block';
+                    fallback.innerHTML = '😕 图片未找到<br><small>' + (data.fallbackMsg || '请检查图片文件') + '</small>';
+                };
+                img1.onload = function() { img1.style.display = 'block'; };
+
+                if (images.length >= 2 && key === 'combined') {
+                    // 显示小象分隔线
+                    sep2.style.display = 'block';
+                    sep2.textContent = '———— ' + (labels[1] || '小象超市') + '开票方法 ————';
+
+                    img2.style.display = 'block';
+                    img2.src = images[1];
+                    img2.onerror = function() {
+                        img2.style.display = 'none';
+                        sep2.style.display = 'none';
+                    };
+                    img2.onload = function() { img2.style.display = 'block'; };
+                }
+                // 提取金额教程（key === 'extract'）不显示任何分隔线
+            }
+        } else if (data.type === 'content') {
+            contentWrapper.style.display = 'block';
+            contentWrapper.innerHTML = data.content;
+        }
+
         overlay.style.display = 'flex';
         document.body.style.overflow = 'hidden';
         const dialog = overlay.querySelector('.modal-dialog');
@@ -908,10 +1102,14 @@
         overlay.style.display = 'none';
         document.body.style.overflow = '';
         currentGuideKey = null;
-        const imgEl = document.getElementById('guideModalImage');
-        imgEl.src = '';
-        imgEl.onerror = null;
-        imgEl.onload = null;
+        const img1 = document.getElementById('guideModalImage1');
+        const img2 = document.getElementById('guideModalImage2');
+        img1.src = '';
+        img2.src = '';
+        img1.onerror = null;
+        img1.onload = null;
+        img2.onerror = null;
+        img2.onload = null;
     }
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && currentGuideKey) closeGuideModalDirect();
@@ -959,7 +1157,6 @@
         }
     }
 
-    // 每分钟更新一次状态
     setInterval(function() {
         updateUploadButton();
     }, 60000);
@@ -1008,6 +1205,17 @@
     }
     function closeQuotaModalDirect() {
         document.getElementById('quotaModalOverlay').style.display = 'none';
+    }
+
+    function openRateLimitModal() {
+        document.getElementById('rateLimitModalOverlay').style.display = 'flex';
+    }
+    function closeRateLimitModal(e) {
+        if (e && e.target !== document.getElementById('rateLimitModalOverlay')) return;
+        closeRateLimitModalDirect();
+    }
+    function closeRateLimitModalDirect() {
+        document.getElementById('rateLimitModalOverlay').style.display = 'none';
     }
 
     document.getElementById('uploadInvoiceBtn').addEventListener('click', function() {
@@ -1061,20 +1269,57 @@
 
     function extractAllAmounts(text) {
         var amounts = [];
-        var yenPattern = /[¥￥]\s*(\d+\.\d{2})/g;
-        var m;
-        while ((m = yenPattern.exec(text)) !== null) {
-            var num = parseFloat(m[1]);
-            if (num > 0.01 && num <= 50000) amounts.push(num.toFixed(2));
-        }
-        var floatPattern = /\b(\d{1,5}\.\d{2})\b/g;
-        while ((m = floatPattern.exec(text)) !== null) {
-            var num = parseFloat(m[1]);
-            if (num > 0.01 && num <= 50000 && !(num > 2000 && num < 2099 && text.substring(m.index - 2, m.index + 5).match(/[年月日]/))) {
-                amounts.push(num.toFixed(2));
+        var seen = new Set();
+
+        var currencyPattern = /[¥￥]\s*(\d+(?:\.\d+)?)/g;
+        var match;
+        while ((match = currencyPattern.exec(text)) !== null) {
+            var num = parseFloat(match[1]);
+            if (num > 0.01 && num <= 50000) {
+                var formatted = num.toFixed(2);
+                if (!seen.has(formatted)) {
+                    seen.add(formatted);
+                    amounts.push(formatted);
+                }
             }
         }
-        return amounts.filter(function(v, i, self) { return self.indexOf(v) === i; });
+        if (amounts.length > 0) return amounts;
+
+        var excludeNumbers = new Set();
+        var pattern = /共\s*(\d+)\s*件/g;
+        while ((match = pattern.exec(text)) !== null) {
+            excludeNumbers.add(parseInt(match[1]));
+        }
+
+        var floatPattern = /\b(\d+(?:\.\d+)?)\b/g;
+        while ((match = floatPattern.exec(text)) !== null) {
+            var num = parseFloat(match[1]);
+            var fullMatch = match[0];
+            var contextStart = Math.max(0, match.index - 4);
+            var contextEnd = Math.min(text.length, match.index + fullMatch.length + 4);
+            var context = text.substring(contextStart, contextEnd);
+
+            if (/^20\d{2}$/.test(fullMatch) || /^19\d{2}$/.test(fullMatch)) continue;
+            if (/^\d{1,2}$/.test(fullMatch) && /[：:]\d{2}/.test(context)) continue;
+            if (/^\d{1,2}$/.test(fullMatch) && /\/\d{2}/.test(context)) continue;
+            if (/^\d{1,2}$/.test(fullMatch) && /\d{4}年\d{1,2}月/.test(context)) continue;
+            if (/^\d+$/.test(fullMatch) && /第\s*\d+\s*页/.test(context)) continue;
+            if (num < 0.01 || num > 50000) continue;
+            if (excludeNumbers.has(Math.round(num))) continue;
+
+            var formatted = num.toFixed(2);
+            if (!seen.has(formatted)) {
+                seen.add(formatted);
+                amounts.push(formatted);
+            }
+        }
+        return amounts;
+    }
+
+    function isQuotaExceededText(text) {
+        if (!text) return false;
+        var lower = text.toLowerCase();
+        return /limit|quota|exceed|daily|max|restriction/i.test(lower);
     }
 
     async function recognizeImage(base64) {
@@ -1088,30 +1333,59 @@
         formData.append('OCREngine', 2);
 
         var response = await fetch(OCR_API_URL, { method: 'POST', body: formData });
+
+        if (response.status === 429) {
+            throw new Error('RATE_LIMIT');
+        }
+
         var result = await response.json();
 
-        if (result.OCRExitCode === 1 || result.OCRExitCode === 2) {
-            var allText = '';
-            if (result.ParsedResults && result.ParsedResults.length) {
-                allText = result.ParsedResults.map(function(r) { return r.ParsedText; }).join(' ');
-            } else if (result.TextOverlay && result.TextOverlay.Lines) {
-                allText = result.TextOverlay.Lines.map(function(line) { return line.LineText; }).join(' ');
-            }
-            var amounts = extractAllAmounts(allText);
-            if (amounts.length === 0) {
-                var fallback = allText.match(/\b\d+\.\d{2}\b/g) || [];
-                fallback.forEach(function(v) {
-                    var n = parseFloat(v);
-                    if (n > 0) amounts.push(n.toFixed(2));
-                });
-            }
-            return { amounts: amounts.filter(function(v, i, self) { return self.indexOf(v) === i; }), rawText: allText.substring(0, 200) };
-        } else if (result.OCRExitCode === 99 || (result.ErrorMessage && result.ErrorMessage.toString().includes('limit'))) {
+        var errorMsg = result.ErrorMessage || result.Error || '';
+        if (isQuotaExceededText(errorMsg)) {
             throw new Error('QUOTA_EXCEEDED');
-        } else {
-            var errMsg = result.ErrorMessage || result.Error || '未知错误';
-            throw new Error('OCR失败: ' + errMsg + ' (代码' + result.OCRExitCode + ')');
         }
+        if (result.OCRExitCode === 99) {
+            throw new Error('QUOTA_EXCEEDED');
+        }
+
+        if (result.OCRExitCode !== 1 && result.OCRExitCode !== 2) {
+            var errMsg = errorMsg || '未知错误';
+            var codeStr = result.OCRExitCode !== undefined ? ('代码' + result.OCRExitCode) : '';
+            throw new Error('OCR失败: ' + errMsg + (codeStr ? ' (' + codeStr + ')' : ''));
+        }
+
+        var allText = '';
+        if (result.ParsedResults && result.ParsedResults.length) {
+            allText = result.ParsedResults.map(function(r) { return r.ParsedText; }).join(' ');
+        } else if (result.TextOverlay && result.TextOverlay.Lines) {
+            allText = result.TextOverlay.Lines.map(function(line) { return line.LineText; }).join(' ');
+        }
+
+        if (isQuotaExceededText(allText)) {
+            throw new Error('QUOTA_EXCEEDED');
+        }
+
+        var amounts = extractAllAmounts(allText);
+        if (amounts.length === 0) {
+            var fallback = allText.match(/\b\d+(?:\.\d+)?\b/g) || [];
+            var fallbackSeen = new Set();
+            var excludeSet = new Set();
+            var patt = /共\s*(\d+)\s*件/g;
+            while ((match = patt.exec(allText)) !== null) {
+                excludeSet.add(parseInt(match[1]));
+            }
+            fallback.forEach(function(v) {
+                var n = parseFloat(v);
+                if (n > 0.01 && n <= 50000 && !excludeSet.has(Math.round(n))) {
+                    var formatted = n.toFixed(2);
+                    if (!fallbackSeen.has(formatted)) {
+                        fallbackSeen.add(formatted);
+                        amounts.push(formatted);
+                    }
+                }
+            });
+        }
+        return { amounts: amounts, rawText: allText.substring(0, 200) };
     }
 
     async function recognizeInvoices(files) {
@@ -1125,9 +1399,15 @@
             try {
                 var base64 = await fileToBase64(files[i]);
                 var result = await recognizeImage(base64);
-                if (result.amounts.length) allAmounts.push.apply(allAmounts, result.amounts);
+                if (result.amounts.length) {
+                    allAmounts = allAmounts.concat(result.amounts);
+                }
             } catch (err) {
-                if (err.message === 'QUOTA_EXCEEDED') {
+                if (err.message === 'RATE_LIMIT') {
+                    updateOCRStatus('请求过于频繁，请稍后再试', true);
+                    openRateLimitModal();
+                    break;
+                } else if (err.message === 'QUOTA_EXCEEDED') {
                     updateOCRStatus('今日该网络识别次数已满', true);
                     openQuotaModal();
                     break;
@@ -1138,11 +1418,13 @@
             }
         }
         if (allAmounts.length) {
-            updateOCRStatus('✅ 成功识别 ' + allAmounts.length + ' 个金额，已填入');
-        } else if (!document.getElementById('quotaModalOverlay').style.display.includes('flex')) {
+            updateOCRStatus('✅ 成功识别 ' + allAmounts.length + ' 个金额（含重复）');
+            return allAmounts;
+        } else if (!document.getElementById('quotaModalOverlay').style.display.includes('flex') &&
+                   !document.getElementById('rateLimitModalOverlay').style.display.includes('flex')) {
             updateOCRStatus('⚠️ 未识别到金额，请检查图片', true);
         }
-        return allAmounts;
+        return [];
     }
 
     document.getElementById('invoiceImageInput').addEventListener('change', async function(e) {
@@ -1164,7 +1446,7 @@
         }
     });
 
-    // ================== 发票凑单算法（原样保留） ==================
+    // ================== 发票凑单算法 ==================
     function findSubsetSumPerfect(nums, target) {
         if (!nums.length) return null;
         var dp = new Map();
